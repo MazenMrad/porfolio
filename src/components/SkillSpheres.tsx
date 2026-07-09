@@ -11,18 +11,15 @@ interface SkillItem {
 }
 
 const skills: SkillItem[] = [
-  { id: 'nextjs', name: 'Next.js', badgeText: 'NX', bgFill: '#000000', textFill: '#ffffff' },
-  { id: 'typescript', name: 'TypeScript', badgeText: 'TS', bgFill: '#3178c6', textFill: '#ffffff' },
-  { id: 'python', name: 'Python', badgeText: 'PY', bgFill: '#306998', textFill: '#ffd43b' },
-  { id: 'nodejs', name: 'Node.js', badgeText: 'NJ', bgFill: '#339933', textFill: '#ffffff' },
-  { id: 'java', name: 'Java', badgeText: 'JV', bgFill: '#b07219', textFill: '#ffffff' },
   { id: 'godot', name: 'Godot', badgeText: 'GD', bgFill: '#478cbf', textFill: '#ffffff' },
-  { id: 'angular', name: 'Angular', badgeText: 'NG', bgFill: '#dd0031', textFill: '#ffffff' },
-  { id: 'prisma', name: 'Prisma', badgeText: 'PR', bgFill: '#2D3748', textFill: '#38BDF8' },
-  { id: 'docker', name: 'Docker', badgeText: 'DK', bgFill: '#0db7ed', textFill: '#ffffff' },
-  { id: 'n8n', name: 'n8n', badgeText: 'N8', bgFill: '#ea4b71', textFill: '#ffffff' },
-  { id: 'supabase', name: 'Supabase', badgeText: 'SB', bgFill: '#3ecf8e', textFill: '#1a1a2e' },
-  { id: 'git', name: 'Git', badgeText: 'GT', bgFill: '#e44c30', textFill: '#ffffff' },
+  { id: 'gdscript', name: 'GDScript', badgeText: 'GS', bgFill: '#3a6f99', textFill: '#ffffff' },
+  { id: 'pixelart', name: 'Pixel Art', badgeText: 'PX', bgFill: '#5a7a99', textFill: '#ffffff' },
+  { id: 'aseprite', name: 'Aseprite', badgeText: 'AS', bgFill: '#5a7a99', textFill: '#ffffff' },
+  { id: 'unity', name: 'Unity', badgeText: 'UN', bgFill: '#3a6f99', textFill: '#ffffff' },
+  { id: 'csharp', name: 'C#', badgeText: 'C#', bgFill: '#4a6b85', textFill: '#ffffff' },
+  { id: 'git', name: 'Git', badgeText: 'GT', bgFill: '#3a6f99', textFill: '#ffffff' },
+  { id: 'itchio', name: 'itch.io', badgeText: 'IO', bgFill: '#478cbf', textFill: '#ffffff' },
+  { id: 'steam', name: 'Steam', badgeText: 'ST', bgFill: '#3a6f99', textFill: '#ffffff' },
 ];
 
 function hexCorners(cx: number, cy: number, r: number, rot = 0) {

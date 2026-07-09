@@ -41,12 +41,12 @@ const FloatingIcosahedron: React.FC = () => {
   return (
     <mesh ref={meshRef}>
       <icosahedronGeometry args={[2, 0]} />
-      {/* Amber glowing wireframe lines */}
+      {/* Godot-blue wireframe */}
       <meshBasicMaterial
-        color="#d97706"
+        color="#478cbf"
         wireframe
         transparent
-        opacity={0.85}
+        opacity={0.82}
       />
     </mesh>
   );
@@ -76,14 +76,14 @@ export const AmberIcosahedron: React.FC = () => {
         style={{ display: 'block', margin: '0 auto', opacity: 0.8 }}
       >
         {/* Draw stylized icosahedron lines */}
-        <polygon points="50,5 95,35 95,65 50,95 5,65 5,35" fill="none" stroke="#d97706" strokeWidth="1" />
-        <polygon points="50,25 80,45 80,55 50,75 20,55 20,45" fill="none" stroke="#d97706" strokeWidth="0.8" />
-        <line x1="50" y1="5" x2="50" y2="25" stroke="#d97706" strokeWidth="0.8" />
-        <line x1="95" y1="35" x2="80" y2="45" stroke="#d97706" strokeWidth="0.8" />
-        <line x1="95" y1="65" x2="80" y2="55" stroke="#d97706" strokeWidth="0.8" />
-        <line x1="50" y1="95" x2="50" y2="75" stroke="#d97706" strokeWidth="0.8" />
-        <line x1="5" y1="65" x2="20" y2="55" stroke="#d97706" strokeWidth="0.8" />
-        <line x1="5" y1="35" x2="20" y2="45" stroke="#d97706" strokeWidth="0.8" />
+        <polygon points="50,5 95,35 95,65 50,95 5,65 5,35" fill="none" stroke="#478cbf" strokeWidth="1" />
+        <polygon points="50,25 80,45 80,55 50,75 20,55 20,45" fill="none" stroke="#478cbf" strokeWidth="0.8" />
+        <line x1="50" y1="5" x2="50" y2="25" stroke="#478cbf" strokeWidth="0.8" />
+        <line x1="95" y1="35" x2="80" y2="45" stroke="#478cbf" strokeWidth="0.8" />
+        <line x1="95" y1="65" x2="80" y2="55" stroke="#478cbf" strokeWidth="0.8" />
+        <line x1="50" y1="95" x2="50" y2="75" stroke="#478cbf" strokeWidth="0.8" />
+        <line x1="5" y1="65" x2="20" y2="55" stroke="#478cbf" strokeWidth="0.8" />
+        <line x1="5" y1="35" x2="20" y2="45" stroke="#478cbf" strokeWidth="0.8" />
       </svg>
     );
   }
@@ -96,3 +96,4 @@ export const AmberIcosahedron: React.FC = () => {
     </div>
   );
 };
+
