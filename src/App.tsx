@@ -86,7 +86,7 @@ function App() {
 
   const gamesGroups: { key: string; label: string; sub: string; items: GameData[] }[] = [
     { key: 'solo', label: 'Solo', sub: 'I designed, coded, and shipped these end to end.', items: games.filter(g => g.category === 'solo') },
-    { key: 'client', label: 'Client', sub: 'Ogre inventory plugin. RoboStark tactics combat.', items: games.filter(g => g.category === 'client') },
+    { key: 'client', label: 'Client', sub: 'Built to a written spec. Inventory plugin and tactics combat.', items: games.filter(g => g.category === 'client') },
     { key: 'jam', label: 'Jam & Team', sub: 'Godot programming under jam deadlines.', items: games.filter(g => g.category === 'jam' && g.id !== 'biscuit-zone') },
     { key: 'experiment', label: 'Experiments', sub: 'Engine work and learning projects.', items: games.filter(g => g.category === 'experiment') },
   ];
@@ -293,7 +293,7 @@ function App() {
                           {game.featured ? (
                             <span className="game-play-badge game-play-badge-featured">Start here</span>
                           ) : game.category === 'client' ? (
-                            <span className="game-play-badge">{game.client?.name ?? 'Client work'}</span>
+                            <span className="game-play-badge">Client work</span>
                           ) : (
                             <span className="game-play-badge"><ArrowRight size={13} /> Systems</span>
                           )}
@@ -314,9 +314,6 @@ function App() {
                           {game.genre.map(tag => (
                             <span key={tag} className="tech-tag">{tag}</span>
                           ))}
-                          {game.client?.name && (
-                            <span className="tech-tag">{game.client.name}</span>
-                          )}
                           <span className="tech-tag tech-tag-engine">{game.engine}</span>
                         </div>
                         <Link
@@ -456,9 +453,6 @@ function App() {
                     {selectedGame.genre.map(tag => (
                       <span key={tag} className="tech-tag">{tag}</span>
                     ))}
-                    {selectedGame.client?.name && (
-                      <span className="tech-tag">{selectedGame.client.name}</span>
-                    )}
                     <span className="tech-tag tech-tag-engine">{selectedGame.engine}</span>
                   </div>
 

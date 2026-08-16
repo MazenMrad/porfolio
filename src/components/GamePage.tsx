@@ -171,7 +171,7 @@ export function GamePage() {
             <FadeIn delay={1}>
               <span className="case-study-kicker">
                 {game.category === 'client'
-                  ? (game.client?.name ? `For ${game.client.name}` : 'Client project')
+                  ? 'Client project'
                   : game.playable
                     ? 'Playable on itch.io'
                     : game.status === 'wip'
@@ -186,9 +186,6 @@ export function GamePage() {
                 {game.genre.map((tag) => (
                   <span key={tag} className="tech-tag">{tag}</span>
                 ))}
-                {game.client?.name && (
-                  <span className="tech-tag">{game.client.name}</span>
-                )}
                 <span className="tech-tag tech-tag-engine">{game.engine}</span>
               </div>
 
@@ -281,12 +278,10 @@ export function GamePage() {
               <FadeIn>
                 <section id="client" className="modal-section pm-section team-role">
                   <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">
-                    {game.client.name ? `For ${game.client.name}` : 'For a client'}
-                  </h3>
+                  <h3 className="modal-section-title">For a client</h3>
                   <p className="team-role-myrole">{game.client.myRole}</p>
                   <div className="team-role-members" style={{ marginTop: '12px' }}>
-                    <span className="team-member-chip">{game.client.name ?? 'Client'}</span>
+                    <span className="team-member-chip">Client</span>
                     <span className="team-member-chip me">Mazen (Mazicore)</span>
                   </div>
                 </section>

@@ -21,7 +21,7 @@ export interface GameData {
   features: string[];
   controls?: { action: string; input: string }[];
   team?: { members: string[]; myRole: string };
-  client?: { name: string; myRole: string };
+  client?: { myRole: string };
   timeline?: { date: string; title: string; body: string }[];
   summary?: string[];
   stats?: { plays: number; views: number };
@@ -266,9 +266,9 @@ export const games: GameData[] = [
     id: 'grid-inventory',
     title: 'Grid Inventory',
     tagline: 'Add loot in the editor. Pick it up in 3D. The UI never owns the world.',
-    hook: 'Godot inventory plugin for Ogre: grid loot, nested bags, equipment.',
-    desc: 'A Godot 4 plugin built for Ogre. Tab opens Pockets, Stash, equipment slots, and a hotbar. Items occupy cells by shape. Equipping a backpack or chest rig opens that bag as its own grid. A 3D demo lets you walk up to loot, press E, and the world only sends an id.',
-    role: 'Client programmer · Ogre · Godot 4 plugin',
+    hook: 'A Godot inventory plugin: grid loot, nested bags, equipment.',
+    desc: 'A Godot 4 plugin for extraction-style inventory, made for a client. Tab opens Pockets, Stash, equipment slots, and a hotbar. Items occupy cells by shape. Equipping a backpack or chest rig opens that bag as its own grid. A 3D demo lets you walk up to loot, press E, and the world only sends an id.',
+    role: 'Client programmer · Godot 4 plugin',
     category: 'client',
     status: 'prototype',
     year: '2026',
@@ -288,9 +288,8 @@ export const games: GameData[] = [
     engine: 'Godot 4.6',
     playable: false,
     client: {
-      name: 'Ogre',
       myRole:
-        'Built for Ogre from a written spec: a drop-in Godot inventory plugin. I owned the addon, the designer workflow, and the tests. Nested bags, equipment, belt-backed hotbar, and 3D pickup. Their game talks to it through an id.',
+        'Made for a client from a written spec: a drop-in Godot inventory plugin. I owned the addon, the designer workflow, and the tests. Nested bags, equipment, belt-backed hotbar, and 3D pickup. Their game talks to it through an id.',
     },
     features: [
       'Tab overlay: Pockets, Stash, equipment, character preview; hotbar stays on screen',
@@ -320,7 +319,7 @@ export const games: GameData[] = [
       { date: '2026 · Aug', title: 'Belt storage', body: 'Belt-granted hotbar slots write into the belt itself, so unequip never spills or deletes items.' },
     ],
     summary: [
-      'Godot 4 plugin for Ogre: Tarkov-style grid inventory with Pockets, Stash, equipment, nested bags, and a hotbar.',
+      'Godot 4 plugin made for a client: Tarkov-style grid inventory with Pockets, Stash, equipment, nested bags, and a hotbar.',
       'Designers add items in the Inspector. No script required to add a medkit, backpack, or magazine.',
       '3D world only sends an id. Cameras and raycasts stay in the game; inventory stays in the plugin.',
       'Belt is real storage: extra hotbar slots belong to the belt, so unequip does not dump items.',
@@ -329,7 +328,7 @@ export const games: GameData[] = [
     ],
     postmortem: {
       thought:
-        'Ogre needed a grid inventory a designer can fill without calling a programmer. This plugin is that piece: items on a grid, bags that hold bags, equipment slots, a hotbar backed by the belt, and a 3D pickup demo that never lets the world own the UI.',
+        'A client needed a grid inventory a designer can fill without calling a programmer. This plugin is that piece: items on a grid, bags that hold bags, equipment slots, a hotbar backed by the belt, and a 3D pickup demo that never lets the world own the UI.',
       mechanics:
         'Tab opens the overlay. Left column is storage: Pockets on top, Stash below. Equipping a backpack or chest rig adds that bag’s grid under Pockets. Center is equipment: Helmet, Vest, Belt, Backpack, Rig, plus Primary and Secondary weapons. The hotbar stays at the bottom whether the overlay is open or closed. Esc frees the cursor so you can drag without turning the camera.\n\nClick an item to pick it up. It follows the cursor. R rotates 90 degrees. Cells light green if it fits, red if it does not. Type and tag filters block illegal drops. A failed drop goes back where it started. Occupied equip slots reject a second item; you unequip first.\n\nRight-click opens Open / Customize / Use / Combine / Drop. Storage bags open as floating windows. Weapons open an attachments panel instead of a bag. You can still drop into a closed bag: hover shows the footprint, a valid drop inserts without opening the window.\n\nNumber keys use the hotbar. Base size is 4. Equip a belt and extra slots appear. Those slots are the belt’s own cells, so taking the belt off keeps every item inside it.',
       systems:
@@ -344,9 +343,9 @@ export const games: GameData[] = [
     id: 'turn-based-combat',
     title: 'Turn-Based Combat',
     tagline: 'Click a unit. Pick an ability. The rules file decides hit, armor, and morale.',
-    hook: 'RoboStark tactics combat you can replay from a seed.',
-    desc: 'Combat rules for RoboStark\'s isometric tactics game. Click a unit, pick Bolt or Stunbolt, and the rules object resolves hit, crit, armor shields, and daze. Every roll goes through a seeded RNG, so the same fight can be replayed. Between battles, health sticks. Dead units stay off the roster. Art, map, and unit sprites are RoboStark\'s.',
-    role: 'Client programmer · RoboStark · combat systems',
+    hook: 'Tactics combat you can replay from a seed.',
+    desc: 'Combat rules for a client\'s isometric tactics game. Click a unit, pick Bolt or Stunbolt, and the rules object resolves hit, crit, armor shields, and daze. Every roll goes through a seeded RNG, so the same fight can be replayed. Between battles, health sticks. Dead units stay off the roster. Art, map, and unit sprites are the client\'s.',
+    role: 'Client programmer · combat systems',
     category: 'client',
     status: 'prototype',
     year: '2026',
@@ -364,13 +363,12 @@ export const games: GameData[] = [
     engine: 'Godot 4.6',
     playable: false,
     client: {
-      name: 'RoboStark',
       myRole:
-        'Built for RoboStark from a written spec: the combat rules layer inside their tactics game. I owned hit/crit/armor/morale math, seeded RNG, the battle state machine, and the tests. Art, units, and the isometric map are theirs.',
+        'Made for a client from a written spec: the combat rules layer inside their tactics game. I owned hit/crit/armor/morale math, seeded RNG, the battle state machine, and the tests. Art, units, and the isometric map are theirs.',
     },
     features: [
       'Isometric grid battle: click a unit, pick an ability, resolve the attack',
-      'Abilities RoboStark authored (Bolt, Stunbolt, Stab, Axeblade) run through the same rules object',
+      'Abilities the client authored (Bolt, Stunbolt, Stab, Axeblade) run through the same rules object',
       'Ability panel shows range, strength %, status, and chance (Stunbolt: 50% daze at range 4)',
       'Overhead HP plus silver shield icons for remaining armor. Selected-unit card shows class and current / max health',
       'Accuracy 1–10 sets hit and crit. A physical hit spends one armor shield, then health',
@@ -388,10 +386,10 @@ export const games: GameData[] = [
       { date: '2026 · Jul', title: 'Rules spec', body: 'Six stats, armor shields, accuracy table, morale table, seeded RNG. One autoload owns every threshold.' },
       { date: '2026 · Jul', title: 'Battle loop', body: 'State machine: setup, start turn, wait for action, resolve attack, check victory, end turn + morale.' },
       { date: '2026 · Jul', title: 'Campaign attrition', body: 'Health persists between fights. Dead units leave the roster. Heal only at explicit campaign points.' },
-      { date: '2026 · Aug', title: 'RoboStark battle', body: 'Wired into RoboStark\'s isometric map: ability bar, selected-unit panel, HP and shield icons, wait-for-action state.' },
+      { date: '2026 · Aug', title: 'Client battle', body: 'Wired into the client\'s isometric map: ability bar, selected-unit panel, HP and shield icons, wait-for-action state.' },
     ],
     summary: [
-      'RoboStark tactics game. I built the combat rules the battle uses: hit, crit, armor, morale, turn order.',
+      'Made for a client. I built the combat rules the battle uses: hit, crit, armor, morale, turn order.',
       'One rules object owns the numbers. Units and abilities do not hide magic values in their scripts.',
       'Seeded random rolls: same seed, same fight. That is what makes the tests possible.',
       'On screen: isometric grid, ability bar, selected-unit card, overhead HP and shield icons.',
@@ -400,7 +398,7 @@ export const games: GameData[] = [
     ],
     postmortem: {
       thought:
-        'RoboStark needed combat a designer can tune without opening unit scripts, and that I can re-run in tests. Hit chance, crits, armor, and morale sit in one rules object. Random rolls go through a seeded RNG. Campaign health is attrition: wounded stays wounded, dead stays dead. Their isometric battle is the skin. The rules file is the job.',
+        'The client needed combat a designer can tune without opening unit scripts, and that I can re-run in tests. Hit chance, crits, armor, and morale sit in one rules object. Random rolls go through a seeded RNG. Campaign health is attrition: wounded stays wounded, dead stays dead. Their isometric battle is the skin. The rules file is the job.',
       mechanics:
         'Click a unit. The selected-unit panel shows class and health (Tank 14/20, Squire Crossbow 7/11). The ability bar offers that unit\'s attacks plus Skip Turn. Hovering Stunbolt shows range 4, 50% strength, 50% chance to daze. A pink tile marks the target.\n\nAn attack rolls to hit from Accuracy, then rolls to crit. A physical hit spends one armor shield before it touches health. That is the silver icon next to the HP bar. Optional penetration lets a fraction through. Crits double damage after armor. Miss and crit show as on-screen indicators. Magic bypasses armor in this version.\n\nTurn order is speed, including morale buffs. Ties break at random. Speed above 10 always acts before anyone at 10 or below.\n\nAt the end of a real turn (skipped units do not roll), morale is checked against a table. Fail: -2 speed until the next round. Morale 10 cannot fail, and grants +2 speed.',
       systems:
@@ -408,7 +406,7 @@ export const games: GameData[] = [
       architecture:
         'Three globals: events, random rolls, and the combat tables. A state machine runs the fight: setup, start turn, wait for action, resolve attack, check victory, end turn. Wait-for-action is the SELECT ABILITY panel. Resolve builds an attack, asks the rules object for the result, then plays hit or die.\n\nUnit tests cover roll sequences, the accuracy table, turn-order distribution, morale fail rates, campaign save/load, and a lint that combat must not heal on its own. Design can change numbers without touching resolution.',
       lessons:
-        'One rules file beats magic numbers in unit scripts. Seeded rolls are what made the test suite possible. RoboStark\'s map and sprites made the systems readable; the job was keeping every threshold out of those sprites. Next is freeze the tables so design can tune without rewriting resolution.',
+        'One rules file beats magic numbers in unit scripts. Seeded rolls are what made the test suite possible. The client\'s map and sprites made the systems readable; the job was keeping every threshold out of those sprites. Next is freeze the tables so design can tune without rewriting resolution.',
     },
   },
   {
