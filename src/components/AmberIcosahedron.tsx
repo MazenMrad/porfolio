@@ -2,98 +2,94 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-// 3D Icosahedron wireframe component that tilts towards mouse pointer
-const FloatingIcosahedron: React.FC = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const targetRotation = useRef({ x: 0, y: 0 });
+/** Low-poly projectile + dotted aim arc — Obsidio's core verb. */
+function AimProjectile() {
+  const group = useRef<THREE.Group>(null);
+  const rock = useRef<THREE.Mesh>(null);
+  const target = useRef({ x: 0, y: 0 });
 
-  // Update target rotation based on cursor move
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) - 0.5;
-      const y = (e.clientY / window.innerHeight) - 0.5;
-      targetRotation.current = {
-        x: y * 0.6,
-        y: x * 0.6
+    const onMove = (e: MouseEvent) => {
+      target.current = {
+        x: (e.clientY / window.innerHeight - 0.5) * 0.5,
+        y: (e.clientX / window.innerWidth - 0.5) * 0.5,
       };
     };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
   useFrame((state) => {
-    if (meshRef.current) {
-      const elapsed = state.clock.getElapsedTime();
-      
-      // Floating wave animation on y-axis
-      meshRef.current.position.y = Math.sin(elapsed * 1.5) * 0.15;
-      
-      // Constant slow rotation + lerping towards mouse coordinates
-      const currentRotX = elapsed * 0.12 + targetRotation.current.x;
-      const currentRotY = elapsed * 0.18 + targetRotation.current.y;
-      
-      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, currentRotX, 0.05);
-      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, currentRotY, 0.05);
+    const t = state.clock.getElapsedTime();
+    if (rock.current) {
+      const u = (t * 0.35) % 1;
+      const x = -1.6 + u * 3.2;
+      const y = 0.15 + Math.sin(u * Math.PI) * 1.35;
+      rock.current.position.set(x, y, 0);
+      rock.current.rotation.x = t * 2.4;
+      rock.current.rotation.z = t * 1.8;
+    }
+    if (group.current) {
+      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, target.current.y, 0.05);
+      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, target.current.x, 0.05);
     }
   });
 
+  const dots = Array.from({ length: 9 }, (_, i) => {
+    const u = i / 8;
+    return {
+      x: -1.6 + u * 3.2,
+      y: 0.15 + Math.sin(u * Math.PI) * 1.35,
+    };
+  });
+
   return (
-    <mesh ref={meshRef}>
-      <icosahedronGeometry args={[2, 0]} />
-      {/* Godot-blue wireframe */}
-      <meshBasicMaterial
-        color="#478cbf"
-        wireframe
-        transparent
-        opacity={0.82}
-      />
-    </mesh>
+    <group ref={group}>
+      {dots.map((d, i) => (
+        <mesh key={i} position={[d.x, d.y, 0]}>
+          <sphereGeometry args={[0.055, 8, 8]} />
+          <meshStandardMaterial
+            color="#7eb6e0"
+            emissive="#478cbf"
+            emissiveIntensity={0.5}
+            transparent
+            opacity={0.35 + i * 0.07}
+          />
+        </mesh>
+      ))}
+      <mesh ref={rock}>
+        <icosahedronGeometry args={[0.32, 0]} />
+        <meshStandardMaterial color="#478cbf" metalness={0.25} roughness={0.45} />
+      </mesh>
+    </group>
   );
-};
+}
 
 export const AmberIcosahedron: React.FC = () => {
   const [webGlSupported, setWebGlSupported] = useState(true);
 
-  // Check WebGL availability
   useEffect(() => {
     try {
       const canvas = document.createElement('canvas');
-      const support = !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      const support = !!(
+        window.WebGLRenderingContext &&
+        (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      );
       setWebGlSupported(support);
     } catch {
       setWebGlSupported(false);
     }
   }, []);
 
-  if (!webGlSupported) {
-    // 2D Static SVG Fallback representing an icosahedron
-    return (
-      <svg
-        width="300"
-        height="300"
-        viewBox="0 0 100 100"
-        style={{ display: 'block', margin: '0 auto', opacity: 0.8 }}
-      >
-        {/* Draw stylized icosahedron lines */}
-        <polygon points="50,5 95,35 95,65 50,95 5,65 5,35" fill="none" stroke="#478cbf" strokeWidth="1" />
-        <polygon points="50,25 80,45 80,55 50,75 20,55 20,45" fill="none" stroke="#478cbf" strokeWidth="0.8" />
-        <line x1="50" y1="5" x2="50" y2="25" stroke="#478cbf" strokeWidth="0.8" />
-        <line x1="95" y1="35" x2="80" y2="45" stroke="#478cbf" strokeWidth="0.8" />
-        <line x1="95" y1="65" x2="80" y2="55" stroke="#478cbf" strokeWidth="0.8" />
-        <line x1="50" y1="95" x2="50" y2="75" stroke="#478cbf" strokeWidth="0.8" />
-        <line x1="5" y1="65" x2="20" y2="55" stroke="#478cbf" strokeWidth="0.8" />
-        <line x1="5" y1="35" x2="20" y2="45" stroke="#478cbf" strokeWidth="0.8" />
-      </svg>
-    );
-  }
+  if (!webGlSupported) return null;
 
   return (
     <div style={{ width: '300px', height: '300px', margin: '0 auto' }}>
-      <Canvas camera={{ position: [0, 0, 5.5] }} gl={{ alpha: true }}>
-        <FloatingIcosahedron />
+      <Canvas camera={{ position: [0, 0.3, 5.2] }} gl={{ alpha: true, antialias: true }}>
+        <ambientLight intensity={0.55} />
+        <directionalLight position={[3, 4, 5]} intensity={1.2} />
+        <AimProjectile />
       </Canvas>
     </div>
   );
 };
-

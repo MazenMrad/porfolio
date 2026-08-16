@@ -4,20 +4,24 @@ export interface GameData {
   tagline: string;
   desc: string;
   role: string;
-  category: 'solo' | 'jam' | 'experiment';
+  category: 'solo' | 'jam' | 'experiment' | 'client';
   status: 'live' | 'prototype' | 'wip';
   year: string;
   cover: string;
   gallery: string[];
   video?: string[];
+  videoNotes?: string[];
   genre: string[];
   engine: string;
   itchUrl?: string;
   xPost?: string;
   playable: boolean;
+  featured?: boolean;
+  hook?: string;
   features: string[];
   controls?: { action: string; input: string }[];
   team?: { members: string[]; myRole: string };
+  client?: { name: string; myRole: string };
   timeline?: { date: string; title: string; body: string }[];
   summary?: string[];
   stats?: { plays: number; views: number };
@@ -36,11 +40,13 @@ export const games: GameData[] = [
   {
     id: 'obsidio',
     title: 'Obsidio',
-    tagline: 'Skill-based tower defense, drag, aim, survive.',
+    tagline: 'You don\'t place towers. You are the weapon.',
+    hook: 'Typical tower defense: watch. This one: aim.',
     desc: 'Forget placing towers and watching them fight. In Obsidio you manually aim and fire every projectile with a satisfying drag-to-aim mechanic. Your aim matters more than tower placement. You are the weapon.',
-    role: 'Solo Developer · 3-month build',
+    role: 'Solo programmer · Godot 4.6 · 3-month ship',
     category: 'solo',
     status: 'live',
+    featured: true,
     year: '2025',
     cover: '/media/obsidio/editor-capture.gif',
     gallery: [
@@ -49,7 +55,7 @@ export const games: GameData[] = [
       'https://img.itch.zone/aW1hZ2UvMzgzMjY3NS8yODA0OTQxOC5wbmc=/original/%2FhOWLS.png',
       '/media/obsidio/editor-capture.gif',
     ],
-    genre: ['Tower Defense', 'Arcade', 'Strategy', 'Pixel Art'],
+    genre: ['Tower Defense', 'Arcade', 'Strategy', '2D'],
     engine: 'Godot 4.6',
     itchUrl: 'https://mazicore.itch.io/obsidio',
     playable: true,
@@ -99,9 +105,10 @@ export const games: GameData[] = [
   {
     id: 'the-last-wager',
     title: 'The Last Wager',
-    tagline: 'A short, atmospheric card game of psychological warfare.',
+    tagline: 'Read a lying heartbeat. Then bet.',
+    hook: 'Luck is the decoy. The real game is reading the AI.',
     desc: 'Outwit your opponent in a high-stakes gambling duel where nerve beats luck. Watch the AI heartbeat monitor to read their hand, then survive Debt Mode if your chips hit zero.',
-    role: 'Solo Developer · Design, Code, Art',
+    role: 'Solo programmer · Design + systems + ship',
     category: 'solo',
     status: 'live',
     year: '2025',
@@ -112,7 +119,7 @@ export const games: GameData[] = [
       'https://img.itch.zone/aW1hZ2UvNDE1MDIwMC8yNDczOTg2NS5wbmc=/original/Ay8qka.png',
       'https://img.itch.zone/aW1hZ2UvNDE1MDIwMC8yNDczOTg5Ny5wbmc=/original/up4OoI.png',
     ],
-    genre: ['Card Game', 'Pixel Art', 'Psychological', 'Singleplayer'],
+    genre: ['Card Game', 'Psychological', 'Singleplayer', '2D'],
     engine: 'Godot 4.6',
     itchUrl: 'https://mazicore.itch.io/the-last-wager',
     playable: true,
@@ -155,9 +162,10 @@ export const games: GameData[] = [
   {
     id: 'pawns-gambit',
     title: "Pawn's Gambit",
-    tagline: 'Turn-based chess-inspired strategy, built in a game jam.',
-      desc: 'A turn-based strategy game inspired by chess, but not actual chess. Build a small team of Attackers and Supporters, clear waves of enemies, and grow stronger each round. Made for Queble Jam 2026.',
-    role: 'Team (4) · 2D Artist + Godot Programmer',
+    tagline: 'Chess-inspired tactics that play nothing like chess.',
+    hook: 'One week. Four people. I owned move mechanics in Godot.',
+    desc: 'A turn-based strategy game inspired by chess, but not actual chess. Build a small team of Attackers and Supporters, clear waves of enemies, and grow stronger each round. Made for Queble Jam 2026.',
+    role: 'Team (4) · Godot programmer + 2D assets',
     category: 'jam',
     status: 'live',
     year: '2026',
@@ -181,11 +189,11 @@ export const games: GameData[] = [
     team: {
       members: ['Chen_Alter<WHO>', 'Mazen (Mazicore)', 'Taylor Kirkwood', 'Dev Wizlo'],
       myRole:
-        '2D pixel artist, created the UI, game assets, and character/Environment art, and a Godot programmer implementing move mechanics, fixing bugs, and helping the combat feel correct under jam crunch.',
+        'Godot programmer on move mechanics, ability resolution, and combat feel under jam crunch — plus UI and 2D assets so the board read in a week.',
     },
     summary: [
       'Chess-inspired turn-based tactics built in 1 week for Queble Jam 2026 by a team of 4.',
-      'My role: 2D pixel artist (UI, assets, character/environment art) + Godot programmer on move mechanics.',
+      'My role: Godot programmer on move mechanics, plus UI/2D assets under jam crunch.',
       'Pieces split into Attackers and Supporters; clearing a wave unlocks new abilities.',
       'Clean art/code split let the team ship a playable build under jam crunch.',
       'Lesson: scope discipline and clear art direction beat feature count in a week.',
@@ -207,9 +215,10 @@ export const games: GameData[] = [
   {
     id: 'biscuit-zone',
     title: 'Biscuit Zone',
-    tagline: 'A platformer with skips, speedrun mechanics, and shooting.',
+    tagline: 'A skip-heavy platformer shipped in a Brackeys jam.',
+    hook: 'The bet: nail movement feel, then stop adding systems.',
     desc: 'A platformer built for Brackeys Game Jam 2025.2 with skips, speedrun mechanics, and a little bit of shooting. Made by a team of 3.',
-    role: 'Team (3) · Art + Bug Fixes',
+    role: 'Team (3) · Build stability + production',
     category: 'jam',
     status: 'prototype',
     year: '2025',
@@ -229,11 +238,11 @@ export const games: GameData[] = [
     team: {
       members: ['sanskalm0', 'Mazen (Mazicore)', 'X1lex'],
       myRole:
-        'Produced most of the game\'s art and handled miscellaneous bug fixes throughout the jam to keep the build stable.',
+        'Kept the jam prototype standing — bug fixes throughout the week — and produced the bulk of the in-game art so the platforming read at a glance.',
     },
     summary: [
       'Fast, skip-heavy platformer with light shooting, built for Brackeys Game Jam 2025.2 by a team of 3.',
-      'My role: produced most of the game\'s art and handled bug fixes to keep the prototype stable.',
+      'My role: keep the build stable (bug fixes) and ship production art so movement feel landed.',
         'Movement is momentum-based and responsive.',
       'Lesson: nailing one system (here, platforming feel) matters more than breadth in a 1-week jam.',
       'Playable on itch.io.',
@@ -252,13 +261,163 @@ export const games: GameData[] = [
     },
   },
 
-  /* ─────────────────────── EXPERIMENTS ─────────────────────── */
+  /* ─────────────────────── CLIENT ─────────────────────── */
+  {
+    id: 'grid-inventory',
+    title: 'Grid Inventory',
+    tagline: 'Add loot in the editor. Pick it up in 3D. The UI never owns the world.',
+    hook: 'Godot inventory plugin for Ogre: grid loot, nested bags, equipment.',
+    desc: 'A Godot 4 plugin built for Ogre. Tab opens Pockets, Stash, equipment slots, and a hotbar. Items occupy cells by shape. Equipping a backpack or chest rig opens that bag as its own grid. A 3D demo lets you walk up to loot, press E, and the world only sends an id.',
+    role: 'Client programmer · Ogre · Godot 4 plugin',
+    category: 'client',
+    status: 'prototype',
+    year: '2026',
+    cover: '/media/grid-inventory/cover.png',
+    gallery: ['/media/grid-inventory/cover.png'],
+    video: [
+      '/media/grid-inventory/world-pickup.mp4',
+      '/media/grid-inventory/equip-screen.mp4',
+      '/media/grid-inventory/belt-hotbar.mp4',
+    ],
+    videoNotes: [
+      '3D demo: look at loot, press E to pick up, Tab for the overlay. The world never talks to the UI except through an id.',
+      'Full screen: Pockets, Stash, helmet / vest / belt / backpack / rig, primary and secondary weapons.',
+      'Equip a belt and the hotbar grows. Those extra slots live on the belt, so unequip does not spill items.',
+    ],
+    genre: ['Inventory', 'Plugin', 'UI', '3D'],
+    engine: 'Godot 4.6',
+    playable: false,
+    client: {
+      name: 'Ogre',
+      myRole:
+        'Built for Ogre from a written spec: a drop-in Godot inventory plugin. I owned the addon, the designer workflow, and the tests. Nested bags, equipment, belt-backed hotbar, and 3D pickup. Their game talks to it through an id.',
+    },
+    features: [
+      'Tab overlay: Pockets, Stash, equipment, character preview; hotbar stays on screen',
+      'Items occupy cells by shape (1x1 through L and T). Rotate with R. Green if it fits, red if not',
+      'Equip helmet, vest, belt, backpack, rig, primary and secondary. Occupied slots reject a second drop',
+      'Equipping a backpack or chest rig opens that bag’s grid. Unequip keeps the contents inside the bag',
+      'Belt grows the hotbar. Extra slots belong to the belt, so taking it off never dumps loot on the floor',
+      'Drop into a closed bag without opening it. Nested bags cannot contain themselves (depth cap 8)',
+      '3D pickup: WASD, E, Tab, Esc. Raycast reads an id; inventory decides where the item lands',
+      'Right-click: Open, Customize (attachments), Use, Combine, Drop. New items are editor data, not scripts',
+      '152 unit tests, 549 asserts: placement, save/load, pickup routing, belt storage',
+    ],
+    controls: [
+      { action: 'Move (3D demo)', input: 'WASD' },
+      { action: 'Pick up', input: 'E' },
+      { action: 'Open / close inventory', input: 'Tab' },
+      { action: 'Free cursor', input: 'Esc' },
+      { action: 'Drag / drop', input: 'Left Mouse' },
+      { action: 'Rotate while dragging', input: 'R' },
+      { action: 'Use hotbar', input: '1–4 (grows with belt)' },
+      { action: 'Context menu', input: 'Right Mouse' },
+    ],
+    timeline: [
+      { date: '2026 · Jul', title: 'Core grids', body: 'Definition vs instance split, multi-grid drag, rotation, filters, nested bags, silent transfer into closed containers.' },
+      { date: '2026 · Jul', title: 'Full screen', body: 'Pockets, Stash, non-grid equip slots, backpack/rig binders, persistent hotbar. Tab overlay on a 3D demo.' },
+      { date: '2026 · Jul', title: 'Capability pass', body: 'Save/load, pickup routing, combine recipes, rolled stats, layout profiles. GUT suite brought to 152/152.' },
+      { date: '2026 · Aug', title: 'Belt storage', body: 'Belt-granted hotbar slots write into the belt itself, so unequip never spills or deletes items.' },
+    ],
+    summary: [
+      'Godot 4 plugin for Ogre: Tarkov-style grid inventory with Pockets, Stash, equipment, nested bags, and a hotbar.',
+      'Designers add items in the Inspector. No script required to add a medkit, backpack, or magazine.',
+      '3D world only sends an id. Cameras and raycasts stay in the game; inventory stays in the plugin.',
+      'Belt is real storage: extra hotbar slots belong to the belt, so unequip does not dump items.',
+      '152 unit tests (549 asserts) on placement, persistence, pickup, and belt storage.',
+      'Not on the Asset Library yet. Split-stack UI and player-facing tooltips are still open.',
+    ],
+    postmortem: {
+      thought:
+        'Ogre needed a grid inventory a designer can fill without calling a programmer. This plugin is that piece: items on a grid, bags that hold bags, equipment slots, a hotbar backed by the belt, and a 3D pickup demo that never lets the world own the UI.',
+      mechanics:
+        'Tab opens the overlay. Left column is storage: Pockets on top, Stash below. Equipping a backpack or chest rig adds that bag’s grid under Pockets. Center is equipment: Helmet, Vest, Belt, Backpack, Rig, plus Primary and Secondary weapons. The hotbar stays at the bottom whether the overlay is open or closed. Esc frees the cursor so you can drag without turning the camera.\n\nClick an item to pick it up. It follows the cursor. R rotates 90 degrees. Cells light green if it fits, red if it does not. Type and tag filters block illegal drops. A failed drop goes back where it started. Occupied equip slots reject a second item; you unequip first.\n\nRight-click opens Open / Customize / Use / Combine / Drop. Storage bags open as floating windows. Weapons open an attachments panel instead of a bag. You can still drop into a closed bag: hover shows the footprint, a valid drop inserts without opening the window.\n\nNumber keys use the hotbar. Base size is 4. Equip a belt and extra slots appear. Those slots are the belt’s own cells, so taking the belt off keeps every item inside it.',
+      systems:
+        'Each item has two layers. The definition is the template in the editor: size, filters, whether it is a bag, attachment mounts, charges, durability. The instance is what exists in play: stack count, rotation, grid cell, rolled stats, and whatever is stored inside it.\n\nA coordinator finds every open grid and slot and hit-tests from the top window down, so a bag on top of the backpack wins the click. Nested bags cannot contain themselves. Depth stops at 8. Closing a parent bag closes the windows inside it.\n\nPickup walks a priority list: top up matching stacks first, then best-fit a free cell, then report no room. Save/load writes a versioned JSON snapshot of the whole graph, including bags sitting in the 3D world.',
+      architecture:
+        'It ships as a Godot editor plugin. Grids preview live in the Inspector. Sample items, shapes, and loadouts ship with the addon so a team can run the demos without making art first.\n\nThe inventory code never touches cameras or raycasts. In the 3D demo, looking at loot reads an id, an adapter turns that id into the real item, and the coordinator decides which grid it lands in. World code stays world code. UI stays UI.\n\nTests: 152 passing, 549 asserts, across placement, persistence, pickup routing, belt storage, and a parse gate. Still open: split-stack UI, a player-facing tooltip panel, and an Asset Library listing.',
+      lessons:
+        'If a designer needs a script to add a medkit, the plugin failed. The belt bug was the same lesson: extra hotbar slots that do not belong to an item will spill on unequip. Tests caught rotation and nested-bag cases that playtesting missed. Next step is a clean addon repo, not more demo content.',
+    },
+  },
+  {
+    id: 'turn-based-combat',
+    title: 'Turn-Based Combat',
+    tagline: 'Click a unit. Pick an ability. The rules file decides hit, armor, and morale.',
+    hook: 'RoboStark tactics combat you can replay from a seed.',
+    desc: 'Combat rules for RoboStark\'s isometric tactics game. Click a unit, pick Bolt or Stunbolt, and the rules object resolves hit, crit, armor shields, and daze. Every roll goes through a seeded RNG, so the same fight can be replayed. Between battles, health sticks. Dead units stay off the roster. Art, map, and unit sprites are RoboStark\'s.',
+    role: 'Client programmer · RoboStark · combat systems',
+    category: 'client',
+    status: 'prototype',
+    year: '2026',
+    cover: '/media/turn-based-combat/cover.png',
+    gallery: ['/media/turn-based-combat/cover.png'],
+    video: [
+      '/media/turn-based-combat/ability-select.mp4',
+      '/media/turn-based-combat/battle-field.mp4',
+    ],
+    videoNotes: [
+      'Pick an ability: Bolt, Stunbolt, Skip Turn. Tooltips show range, strength %, and status chance. Grid tile highlights the target.',
+      'Wait-for-action: SELECT ABILITY, selected-unit panel, overhead HP and silver shield icons.',
+    ],
+    genre: ['Tactics', 'Combat'],
+    engine: 'Godot 4.6',
+    playable: false,
+    client: {
+      name: 'RoboStark',
+      myRole:
+        'Built for RoboStark from a written spec: the combat rules layer inside their tactics game. I owned hit/crit/armor/morale math, seeded RNG, the battle state machine, and the tests. Art, units, and the isometric map are theirs.',
+    },
+    features: [
+      'Isometric grid battle: click a unit, pick an ability, resolve the attack',
+      'Abilities RoboStark authored (Bolt, Stunbolt, Stab, Axeblade) run through the same rules object',
+      'Ability panel shows range, strength %, status, and chance (Stunbolt: 50% daze at range 4)',
+      'Overhead HP plus silver shield icons for remaining armor. Selected-unit card shows class and current / max health',
+      'Accuracy 1–10 sets hit and crit. A physical hit spends one armor shield, then health',
+      'Faster units act first. Speed above 10 always goes before everyone else',
+      'End of a real turn: morale check. Fail: -2 speed next round. Morale 10 cannot fail',
+      'Between battles, health carries over. Dead units cannot be deployed again',
+      'Unit tests prove the same seed produces the same rolls. Combat is not allowed to auto-heal',
+    ],
+    controls: [
+      { action: 'Select unit / tile', input: 'Left Mouse' },
+      { action: 'Choose ability', input: 'Bolt / Stunbolt / Stab / Axeblade' },
+      { action: 'Skip turn', input: 'Skip Turn' },
+    ],
+    timeline: [
+      { date: '2026 · Jul', title: 'Rules spec', body: 'Six stats, armor shields, accuracy table, morale table, seeded RNG. One autoload owns every threshold.' },
+      { date: '2026 · Jul', title: 'Battle loop', body: 'State machine: setup, start turn, wait for action, resolve attack, check victory, end turn + morale.' },
+      { date: '2026 · Jul', title: 'Campaign attrition', body: 'Health persists between fights. Dead units leave the roster. Heal only at explicit campaign points.' },
+      { date: '2026 · Aug', title: 'RoboStark battle', body: 'Wired into RoboStark\'s isometric map: ability bar, selected-unit panel, HP and shield icons, wait-for-action state.' },
+    ],
+    summary: [
+      'RoboStark tactics game. I built the combat rules the battle uses: hit, crit, armor, morale, turn order.',
+      'One rules object owns the numbers. Units and abilities do not hide magic values in their scripts.',
+      'Seeded random rolls: same seed, same fight. That is what makes the tests possible.',
+      'On screen: isometric grid, ability bar, selected-unit card, overhead HP and shield icons.',
+      'Campaign layer: health persists, death is permanent until an explicit heal point.',
+      'Tests cover RNG, turn order, morale, campaign save, and a check that combat never auto-heals.',
+    ],
+    postmortem: {
+      thought:
+        'RoboStark needed combat a designer can tune without opening unit scripts, and that I can re-run in tests. Hit chance, crits, armor, and morale sit in one rules object. Random rolls go through a seeded RNG. Campaign health is attrition: wounded stays wounded, dead stays dead. Their isometric battle is the skin. The rules file is the job.',
+      mechanics:
+        'Click a unit. The selected-unit panel shows class and health (Tank 14/20, Squire Crossbow 7/11). The ability bar offers that unit\'s attacks plus Skip Turn. Hovering Stunbolt shows range 4, 50% strength, 50% chance to daze. A pink tile marks the target.\n\nAn attack rolls to hit from Accuracy, then rolls to crit. A physical hit spends one armor shield before it touches health. That is the silver icon next to the HP bar. Optional penetration lets a fraction through. Crits double damage after armor. Miss and crit show as on-screen indicators. Magic bypasses armor in this version.\n\nTurn order is speed, including morale buffs. Ties break at random. Speed above 10 always acts before anyone at 10 or below.\n\nAt the end of a real turn (skipped units do not roll), morale is checked against a table. Fail: -2 speed until the next round. Morale 10 cannot fail, and grants +2 speed.',
+      systems:
+        'A unit has a definition (class, faction, stats, abilities) and live combat state (current health, armor, morale, buffs, effective speed). Health ranges are clamped by class. Strength scales melee. Arcane Might scales mage damage. Accuracy is the only crit stat.\n\nA corpse cannot be killed twice. Speed buffs apply after the queue rebuilds, so a morale fail shows up next round, not mid-turn.\n\nBetween battles a campaign object stores health by unit id, a dead list, and the last seed. Heal only happens at points the campaign chooses. Dead units cannot be deployed.',
+      architecture:
+        'Three globals: events, random rolls, and the combat tables. A state machine runs the fight: setup, start turn, wait for action, resolve attack, check victory, end turn. Wait-for-action is the SELECT ABILITY panel. Resolve builds an attack, asks the rules object for the result, then plays hit or die.\n\nUnit tests cover roll sequences, the accuracy table, turn-order distribution, morale fail rates, campaign save/load, and a lint that combat must not heal on its own. Design can change numbers without touching resolution.',
+      lessons:
+        'One rules file beats magic numbers in unit scripts. Seeded rolls are what made the test suite possible. RoboStark\'s map and sprites made the systems readable; the job was keeping every threshold out of those sprites. Next is freeze the tables so design can tune without rewriting resolution.',
+    },
+  },
   {
     id: 'spectra-signals',
     title: 'SIGNALS',
-    tagline: 'A Cold War radio-operator mystery where every transmission has consequences.',
-      desc: 'A solo-developed narrative mystery in Unity. Across 5 shifts you intercept radio transmissions and classify them as REPORT or DISCARD, and every choice weighs Loyalty, Morals, and Competence. A learning project that grew into a complete MVP.',
-    role: 'Solo Developer · Unity',
+    tagline: 'Every transmission is a moral trap. Stamp REPORT or DISCARD.',
+    hook: 'A Unity systems study: scoring, narrative, and consequence queues.',
+    desc: 'A solo-developed narrative mystery in Unity. Across 5 shifts you intercept radio transmissions and classify them as REPORT or DISCARD, and every choice weighs Loyalty, Morals, and Competence. A learning project that grew into a complete MVP.',
+    role: 'Solo programmer · Unity systems MVP',
     category: 'experiment',
     status: 'prototype',
     year: '2026',
@@ -310,9 +469,10 @@ export const games: GameData[] = [
   {
     id: 'partitio-yellowili',
     title: 'Partitio Yellowili',
-    tagline: 'A resource-economy fighter built inside YOMIH, learned from zero.',
+    tagline: 'A resource-economy fighter inside an engine I had never opened.',
+    hook: 'The hard part was not the character. It was YOMIH\'s tick loop.',
     desc: 'A custom character mod for YOMIH (Your Only Move Is Hustle), a Steam game. It adds three original systems: Boost Points that empower attacks on a timer, a leaves economy earned by every hit, and NPC allies you can summon. Built by ramping on an engine I had never opened. Still in progress.',
-    role: 'Solo Modder · YOMIH (Godot 3)',
+    role: 'Solo programmer · YOMIH (Godot 3) mod',
     category: 'experiment',
     status: 'wip',
     year: '2026',

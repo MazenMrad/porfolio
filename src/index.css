@@ -257,7 +257,7 @@ h3 { font-size: 1.3rem; }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 1.15fr);
   gap: 48px;
   align-items: center;
   position: relative;
@@ -267,7 +267,7 @@ h3 { font-size: 1.3rem; }
 .hero-tagline {
   font-size: 1.1rem;
   color: var(--text-secondary);
-  margin-bottom: 36px;
+  margin-bottom: 28px;
   max-width: 640px;
   line-height: 1.7;
 }
@@ -281,6 +281,62 @@ h3 { font-size: 1.3rem; }
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
+}
+
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.hero-proof strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.hero-media {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-hover);
+  background: #0a0e1c;
+}
+
+.hero-media-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-media-caption {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.65);
+}
+
+.hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7, 10, 22, 0.72), transparent 45%);
+  pointer-events: none;
 }
 
 /* ─── Buttons ─── */
@@ -428,6 +484,82 @@ h3 { font-size: 1.3rem; }
 .game-card:hover .game-play-badge {
   opacity: 1;
   transform: translateY(0);
+}
+
+.game-card.featured {
+  border-color: var(--border-hover);
+}
+
+.game-card.featured .game-play-badge,
+.game-play-badge-featured {
+  opacity: 1;
+  transform: none;
+  background: rgba(34, 224, 138, 0.9);
+}
+
+.system-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.system-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.skill-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px 36px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.skill-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 88px;
+}
+
+.skill-icon img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.25s var(--ease-out-expo);
+}
+
+.skill-icon.is-hovered img {
+  transform: translateY(-4px);
+}
+
+.skill-icon span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+.skill-icon.is-hovered span {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .game-card-content {
@@ -1107,6 +1239,10 @@ body.modal-open {
 
   .hero-actions { justify-content: center; }
 
+  .hero-proof { justify-content: center; }
+
+  .hero-media { max-width: 560px; margin: 0 auto; }
+
   section { padding: 64px 0; }
 
   .header-nav { display: none; }
@@ -1707,6 +1843,10 @@ body.modal-open {
   border: 0;
 }
 
+.video-block {
+  margin-bottom: 20px;
+}
+
 .video-embed {
   position: relative;
   width: 100%;
@@ -1716,7 +1856,13 @@ body.modal-open {
   border: 1px solid var(--border);
   background: #000;
   box-shadow: var(--shadow-md);
-  margin-bottom: 16px;
+}
+
+.video-caption {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-muted, #8a97b3);
 }
 
 .video-embed iframe {
@@ -1786,6 +1932,7 @@ body.modal-open {
 }
 
 .game-card-badge.solo { color: var(--accent); border-color: rgba(71, 140, 191, 0.35); background: var(--accent-light); }
+.game-card-badge.client { color: #e8d5b5; border-color: rgba(232, 213, 181, 0.35); background: rgba(232, 213, 181, 0.08); }
 .game-card-badge.jam { color: var(--green); border-color: rgba(34, 224, 138, 0.3); background: var(--green-light); }
 .game-card-badge.experiment { color: var(--amber); border-color: rgba(255, 176, 32, 0.3); background: var(--amber-light); }
 

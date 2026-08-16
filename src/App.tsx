@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AmberIcosahedron } from './components/AmberIcosahedron';
 import { SkillSpheres } from './components/SkillSpheres';
 import { LedOrb } from './components/LedOrb';
 import { AboutObject } from './components/AboutObject';
 import { games, type GameData } from './data/games';
-import { Mail, ExternalLink, ArrowRight, Play, Gamepad2, Menu, X, MessageCircle } from 'lucide-react';
+import { Mail, ExternalLink, ArrowRight, Play, Gamepad2, Menu, X } from 'lucide-react';
 
 /* ─── Scroll-triggered fade-in hook ─── */
 function useFadeIn() {
@@ -86,9 +85,21 @@ function App() {
   /* ─── Games (imported from data module) ─── */
 
   const gamesGroups: { key: string; label: string; sub: string; items: GameData[] }[] = [
-    { key: 'solo', label: 'Solo', sub: 'Games I designed, coded, and shipped end to end.', items: games.filter(g => g.category === 'solo') },
-    { key: 'jam', label: 'Jam & Team', sub: 'Built with a crew under game-jam deadlines.', items: games.filter(g => g.category === 'jam') },
-    { key: 'experiment', label: 'Experiments', sub: 'Learning builds and prototypes exploring new ideas.', items: games.filter(g => g.category === 'experiment') },
+    { key: 'solo', label: 'Solo', sub: 'I designed, coded, and shipped these end to end.', items: games.filter(g => g.category === 'solo') },
+    { key: 'client', label: 'Client', sub: 'Ogre inventory plugin. RoboStark tactics combat.', items: games.filter(g => g.category === 'client') },
+    { key: 'jam', label: 'Jam & Team', sub: 'Godot programming under jam deadlines.', items: games.filter(g => g.category === 'jam' && g.id !== 'biscuit-zone') },
+    { key: 'experiment', label: 'Experiments', sub: 'Engine work and learning projects.', items: games.filter(g => g.category === 'experiment') },
+  ];
+
+  const livePlays = games.reduce((sum, g) => sum + (g.stats?.plays ?? 0), 0);
+  const liveTitles = games.filter((g) => g.status === 'live').length;
+  const shippedSystems = [
+    'Signal-driven HUD',
+    'Grid inventory',
+    'Replayable combat rolls',
+    'Object pools',
+    'Economy loops',
+    'Enemy state machines',
   ];
 
   const navLinks = [
@@ -172,29 +183,36 @@ function App() {
         <div className="portfolio-container hero-grid">
           <div>
             <FadeIn>
-              <span className="section-label">&gt; godot // game dev // solo + team</span>
+              <span className="section-label">&gt; godot 4.6 // programmer // playable builds</span>
             </FadeIn>
             <FadeIn delay={1}>
               <h1 style={{ marginBottom: '20px' }}>
-                I build small games
+                I write the systems.<br />
+                You feel them in play.
               </h1>
             </FadeIn>
             <FadeIn delay={2}>
               <p className="hero-tagline">
-                Small games, big atmosphere. Built with Godot.
+                Godot game programmer. Start with <strong>Obsidio</strong>:
+                tower defense that rewards aim, not placement.
               </p>
             </FadeIn>
             <FadeIn delay={3}>
               <div className="hero-actions">
-                <Link to="/#games" className="cta-button">
-                  Play my games <Play size={14} />
-                </Link>
-                <a href="https://mazicore.itch.io/" target="_blank" rel="noopener noreferrer" className="btn-outline">
-                  itch.io profile <ExternalLink size={14} />
+                <a href="https://mazicore.itch.io/obsidio" target="_blank" rel="noopener noreferrer" className="cta-button">
+                  Play Obsidio <Play size={14} />
                 </a>
+                <Link to="/#games" className="btn-outline">
+                  See the systems <ArrowRight size={14} />
+                </Link>
               </div>
             </FadeIn>
             <FadeIn delay={4}>
+              <div className="hero-proof">
+                <span><strong>{liveTitles}</strong> live Godot titles</span>
+                <span><strong>{livePlays}</strong> plays on itch</span>
+                <span><strong>Solo + jam</strong></span>
+              </div>
               <div className="hero-socials">
                 <a href="mailto:mazicore78@gmail.com" className="social-link" title="Email" aria-label="Email">
                   <Mail size={18} />
@@ -210,9 +228,24 @@ function App() {
           </div>
 
           <FadeIn delay={2}>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <AmberIcosahedron />
-            </div>
+            <a
+              className="hero-media"
+              href="https://mazicore.itch.io/obsidio"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Play Obsidio on itch.io"
+            >
+              <video
+                className="hero-media-video"
+                src="/media/obsidio/water-shader.mp4"
+                poster="/media/obsidio/editor-capture.gif"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+              <span className="hero-media-caption">Tower defense that rewards aim, not placement.</span>
+            </a>
           </FadeIn>
         </div>
       </section>
@@ -221,11 +254,11 @@ function App() {
       <section id="games" style={{ background: 'var(--bg)' }}>
         <div className="portfolio-container">
           <FadeIn>
-            <span className="section-label">Projects</span>
-            <h2>Games & Experiments</h2>
+            <span className="section-label">Shipped work</span>
+            <h2>Play it. Then read how it was built.</h2>
               <p className="subtitle" style={{ marginBottom: '40px' }}>
-                Solo builds, jam collaborations, and prototypes. Click any card for the full
-                dev breakdown, screenshots, and a link to play.
+                Start with Obsidio. Every card is a system you can inspect —
+                combat, economy, UI — not a mood board.
               </p>
           </FadeIn>
 
@@ -242,7 +275,7 @@ function App() {
               <div className="games-grid">
                 {group.items.map((game, i) => (
                   <FadeIn key={game.id} delay={Math.min(i + 1, 4) as 1 | 2 | 3 | 4}>
-                    <div className="game-card" onClick={() => handleGameClick(game)} style={{ cursor: 'pointer' }}>
+                    <div className={`game-card${game.featured ? ' featured' : ''}`} onClick={() => handleGameClick(game)} style={{ cursor: 'pointer' }}>
                       <div className="game-card-cover">
                         {game.video && game.video.some((v) => /(\.mp4|\.webm)$/i.test(v)) ? (
                           <video
@@ -257,7 +290,13 @@ function App() {
                           <div className="game-card-cover-img" style={{ backgroundImage: `url(${game.cover})` }} />
                         )}
                         <div className="game-card-cover-overlay">
-                          <span className="game-play-badge"><ArrowRight size={13} /> Case study</span>
+                          {game.featured ? (
+                            <span className="game-play-badge game-play-badge-featured">Start here</span>
+                          ) : game.category === 'client' ? (
+                            <span className="game-play-badge">{game.client?.name ?? 'Client work'}</span>
+                          ) : (
+                            <span className="game-play-badge"><ArrowRight size={13} /> Systems</span>
+                          )}
                         </div>
                         <LedOrb status={game.status} />
                       </div>
@@ -269,12 +308,15 @@ function App() {
                           <span className="project-year">{game.year}</span>
                         </div>
                         <span className={`game-card-badge ${game.category}`}>{game.category}</span>
-                        <p className="game-card-tagline">{game.tagline}</p>
-                        <p className="game-desc">{game.desc}</p>
+                        <p className="game-card-tagline">{game.hook ?? game.tagline}</p>
+                        <p className="game-desc">{game.tagline}</p>
                         <div className="tech-tags">
                           {game.genre.map(tag => (
                             <span key={tag} className="tech-tag">{tag}</span>
                           ))}
+                          {game.client?.name && (
+                            <span className="tech-tag">{game.client.name}</span>
+                          )}
                           <span className="tech-tag tech-tag-engine">{game.engine}</span>
                         </div>
                         <Link
@@ -282,7 +324,7 @@ function App() {
                           className="project-click-hint"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          Read full case study &rarr;
+                          See the systems &rarr;
                         </Link>
                       </div>
                     </div>
@@ -299,16 +341,22 @@ function App() {
         <div className="portfolio-container" style={{ textAlign: 'center' }}>
           <FadeIn>
             <span className="section-label">Stack</span>
-            <h2>Tools of the Trade</h2>
+            <h2>What I actually write</h2>
             <p className="subtitle" style={{ margin: '0 auto 40px auto' }}>
-              Engines, languages, and craft I use to take a game from prototype to playable build.
+              Godot and GDScript first. Unity when the problem needs it.
+              The chips below are systems I have shipped, not a tool museum.
             </p>
           </FadeIn>
 
           <FadeIn delay={2}>
-            <div style={{ margin: '40px 0' }}>
+            <div style={{ margin: '40px 0 28px' }}>
               <SkillSpheres />
             </div>
+            <ul className="system-chips">
+              {shippedSystems.map((item) => (
+                <li key={item} className="system-chip">{item}</li>
+              ))}
+            </ul>
           </FadeIn>
         </div>
       </section>
@@ -320,13 +368,14 @@ function App() {
             <div className="about-layout-text">
               <FadeIn>
                 <span className="section-label">About</span>
-                <h2>About Me</h2>
+                <h2>Godot programmer. CS student. I ship playable systems.</h2>
               </FadeIn>
               <FadeIn delay={1}>
                 <p className="about-bio">
-                  Hi! I'm a Game developer and computer science student working on 2D systems, UI,
-                  dialogue and data persistence and a lot of more things using Godot. I focus on
-                  building functional, reusable systems for indie and narrative-driven projects.
+                  I build 2D game systems in Godot: combat feel, economy loops,
+                  signal-driven UI, and persistence. If a feature does not change
+                  how a run feels, I do not ship it. Open to Godot work —
+                  solo systems, jam teams, or a playable prototype.
                 </p>
               </FadeIn>
             </div>
@@ -344,17 +393,17 @@ function App() {
         <div className="portfolio-container" style={{ maxWidth: '560px', textAlign: 'center' }}>
           <FadeIn>
             <span className="section-label">Contact</span>
-            <h2>Let's Build Something</h2>
+            <h2>Need a Godot programmer?</h2>
             <p className="subtitle" style={{ margin: '0 auto 36px auto' }}>
-              Open to collaborations, game jams, commissions, or just talking shop with fellow
-              devs and artists. Reach out any time.
+              Solo systems work, jam collaboration, or a prototype you can play.
+              Email is the fastest path.
             </p>
           </FadeIn>
 
           <FadeIn delay={1}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'center' }}>
               <a href="mailto:mazicore78@gmail.com" className="cta-button" style={{ justifyContent: 'center' }}>
-                Send me an email <ArrowRight size={14} />
+                Email Mazen <ArrowRight size={14} />
               </a>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
                 mazicore78@gmail.com
@@ -364,17 +413,14 @@ function App() {
 
           <FadeIn delay={2}>
             <div className="social-links" style={{ marginTop: '36px' }}>
-              <a href="mailto:mazenmrad.123.ma@gmail.com" className="social-link" title="Email" aria-label="Email">
+              <a href="mailto:mazicore78@gmail.com" className="social-link" title="Email" aria-label="Email">
                 <Mail size={18} />
               </a>
               <a href="https://mazicore.itch.io/" target="_blank" rel="noopener noreferrer" className="social-link" title="itch.io" aria-label="itch.io">
                 <Gamepad2 size={18} />
               </a>
-                <a href="https://x.com/CoreMazi27888" target="_blank" rel="noopener noreferrer" className="social-link social-link-x" title="X" aria-label="X">
-                  X
-                </a>
-              <a href="https://mazicore.itch.io/" target="_blank" rel="noopener noreferrer" className="social-link" title="Community" aria-label="Community">
-                <MessageCircle size={18} />
+              <a href="https://x.com/CoreMazi27888" target="_blank" rel="noopener noreferrer" className="social-link social-link-x" title="X" aria-label="X">
+                X
               </a>
             </div>
           </FadeIn>
@@ -410,6 +456,9 @@ function App() {
                     {selectedGame.genre.map(tag => (
                       <span key={tag} className="tech-tag">{tag}</span>
                     ))}
+                    {selectedGame.client?.name && (
+                      <span className="tech-tag">{selectedGame.client.name}</span>
+                    )}
                     <span className="tech-tag tech-tag-engine">{selectedGame.engine}</span>
                   </div>
 
@@ -435,11 +484,13 @@ function App() {
                   </section>
 
                   <div className="modal-links">
-                    <a href={selectedGame.itchUrl} target="_blank" rel="noopener noreferrer" className="cta-button" style={{ fontSize: '13px' }}>
-                      Play on itch.io <ExternalLink size={13} />
-                    </a>
+                    {selectedGame.itchUrl && (
+                      <a href={selectedGame.itchUrl} target="_blank" rel="noopener noreferrer" className="cta-button" style={{ fontSize: '13px' }}>
+                        Play on itch.io <ExternalLink size={13} />
+                      </a>
+                    )}
                     <Link to={`/games/${selectedGame.id}`} className="btn-outline" style={{ fontSize: '13px' }}>
-                      Full case study &rarr;
+                      See the systems &rarr;
                     </Link>
                   </div>
                 </div>

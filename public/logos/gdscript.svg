@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path fill="#478cbf" d="M6.2 2.5h8.4L20 8v13.5H6.2A1.7 1.7 0 0 1 4.5 19.8V4.2A1.7 1.7 0 0 1 6.2 2.5Z"/>
+  <path fill="#0b1020" d="M14.4 2.5V8H20"/>
+  <text x="12" y="16.2" text-anchor="middle" fill="#fff" font-size="7" font-family="ui-monospace, monospace" font-weight="700">GD</text>
+</svg>
