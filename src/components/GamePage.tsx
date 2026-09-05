@@ -1,435 +1,433 @@
-import { useEffect, useRef, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, ArrowUpRight, MessageCircle, X } from 'lucide-react';
 import { getGame, type GameData } from '../data/games';
-import { LedOrb } from './LedOrb';
-import { ExternalLink, ArrowRight, ArrowLeft, MessageCircle } from 'lucide-react';
+import { testimonials } from '../data/practice';
+import { ProjectMedia } from './ProjectMedia';
 
-function useFadeIn() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('visible');
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
+const EMAIL = 'mazicore78@gmail.com';
 
-function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const ref = useFadeIn();
-  const delayClass = delay > 0 ? ` fade-in-delay-${delay}` : '';
-  return (
-    <div ref={ref} className={`fade-in${delayClass} ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-function padIndex(n: number) {
+function pad(n: number) {
   return String(n).padStart(2, '0');
 }
 
-function GameMedia({
-  game,
-  index,
-  onPick,
-}: {
-  game: GameData;
-  index: string;
-  onPick: (src: string) => void;
-}) {
-  const hasVideo = Boolean(game.video && game.video.length > 0);
-  const hasGallery = Boolean(game.gallery && game.gallery.length > 0);
-  if (!hasVideo && !hasGallery) return null;
+function statusLabel(status: GameData['status']) {
+  if (status === 'live') return 'Live';
+  if (status === 'wip') return 'In progress';
+  return 'Prototype';
+}
 
+/* A numbered article section. The rail of numbers gives a long postmortem a
+   spine, so a reader can tell how far in they are and skip to a part. */
+function Section({
+  no,
+  title,
+  id,
+  children,
+}: {
+  no: string;
+  title: string;
+  id?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <FadeIn>
-      <section id="media" className="modal-section pm-section">
-        <span className="pm-index">{index}</span>
-        <h3 className="modal-section-title">See it first</h3>
-        {hasVideo && (
-          <div className="game-page-video">
-            {game.video!.map((src, idx) => {
-              const isLocal = src.startsWith('/') || /\.(mp4|webm)$/i.test(src);
-              if (isLocal) {
-                const note = game.videoNotes?.[idx] ?? (/npc-spawn/i.test(src) ? 'Spawns, but does not act yet.' : undefined);
-                return (
-                  <div key={idx} className="video-block">
-                    <div className="video-embed">
-                      <video
-                        src={src}
-                        controls
-                        playsInline
-                        title={`${game.title} video ${idx + 1}`}
-                        className="game-page-video-el"
-                      />
-                    </div>
-                    {note && <p className="video-caption">{note}</p>}
-                  </div>
-                );
-              }
-              return (
-                <div key={idx} className="video-embed">
-                  <iframe
-                    src={src}
-                    title={`${game.title} video ${idx + 1}`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-        {hasGallery && (
-          <div className="game-page-gallery">
-            {game.gallery.map((img, idx) => (
-              <div
-                key={idx}
-                className="game-page-gallery-item"
-                style={{ backgroundImage: `url(${img})` }}
-                onClick={() => onPick(img)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-    </FadeIn>
+    <section id={id} className="dx-sec">
+      <span className="dx-sec__no">{no}</span>
+      <h2 className="dx-sec__t">{title}</h2>
+      {children}
+    </section>
   );
 }
 
 export function GamePage() {
   const { slug } = useParams<{ slug: string }>();
   const game = slug ? getGame(slug) : undefined;
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [showSummary, setShowSummary] = useState(false);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
 
   useEffect(() => {
-    if (lightboxImage) {
-      const onKey = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') setLightboxImage(null);
-      };
-      window.addEventListener('keydown', onKey);
-      return () => window.removeEventListener('keydown', onKey);
-    }
-  }, [lightboxImage]);
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightbox]);
 
   if (!game) {
     return (
-      <div className="game-page-missing">
-        <h1>Game not found</h1>
-        <p className="subtitle">That project doesn't exist (yet).</p>
-        <Link to="/" className="cta-button">Back to portfolio <ArrowLeft size={14} /></Link>
+      <div className="dx-shell dx-missing">
+        <h1 className="dx-display dx-h2">Project not found.</h1>
+        <p className="dx-lede" style={{ margin: '16px auto 28px' }}>
+          That one doesn't exist. Or doesn't yet.
+        </p>
+        <Link to="/" className="dx-btn">
+          <ArrowLeft size={14} /> Back to the work
+        </Link>
       </div>
     );
   }
 
-  let section = 0;
-  const nextIndex = () => padIndex(++section);
+  let n = 0;
+  const next = () => pad(++n);
 
-  return (
-    <div className="game-page">
-      <div className="game-page-hero">
-        <div className="game-page-hero-glow" />
-        <div className="portfolio-container">
-          <Link to="/#games" className="game-page-back">
-            <ArrowLeft size={14} /> All games
-          </Link>
+  const clip = game.video?.find((v) => /\.(mp4|webm)$/i.test(v));
+  const vouch = testimonials.find((t) => t.project === game.id);
 
-          <div className="game-page-hero-grid">
-            <FadeIn>
-              <div className="game-page-cover">
-                {game.video && game.video.some((v) => /(\.mp4|\.webm)$/i.test(v)) ? (
-                  <video
-                    className="game-page-cover-video"
-                    src={game.video.find((v) => /(\.mp4|\.webm)$/i.test(v))}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  />
-                ) : (
-                  <div className="game-page-cover-img" style={{ backgroundImage: `url(${game.cover})` }} />
-                )}
-                <LedOrb status={game.status} />
-              </div>
-            </FadeIn>
+  // Trying a single continuous two-column layout on one project before rolling
+  // it out. In the original the hero was its own grid and the article started
+  // below the whole thing, so the prose never lined up under the description
+  // and the space beside it sat empty for the length of the write-up.
+  const useSidebarLayout = game.id === 'obsidio';
 
-            <FadeIn delay={1}>
-              <span className="case-study-kicker">
-                {game.category === 'client'
-                  ? 'Client project'
-                  : game.playable
-                    ? 'Playable on itch.io'
-                    : game.status === 'wip'
-                      ? 'Work in progress'
-                      : 'Prototype'}
-              </span>
-              <span className="section-label">&gt; {game.engine} // {game.role}</span>
-              <h1 className="game-page-title">{game.title}</h1>
-              <p className="game-page-tagline">{game.hook ?? game.tagline}</p>
+  const sideColumn = (
+    <>
+      {/* Wide, not 4:3. Gameplay and tool captures are landscape, and a squarer
+          well crops the sides. */}
+      <ProjectMedia poster={game.cover} video={clip} alt={`${game.title} gameplay`} />
 
-              <div className="tech-tags" style={{ marginBottom: '20px' }}>
-                {game.genre.map((tag) => (
-                  <span key={tag} className="tech-tag">{tag}</span>
-                ))}
-                <span className="tech-tag tech-tag-engine">{game.engine}</span>
-              </div>
-
-              {game.stats && (
-                <p className="case-study-stats">
-                  {game.stats.plays} plays · {game.stats.views} views on itch.io
-                </p>
-              )}
-
-              <div className="game-page-actions">
-                {game.itchUrl && (
-                  <a href={game.itchUrl} target="_blank" rel="noopener noreferrer" className="cta-button">
-                    Play on itch.io <ExternalLink size={14} />
-                  </a>
-                )}
-                {game.xPost && !game.itchUrl && (
-                  <a href={game.xPost} target="_blank" rel="noopener noreferrer" className="cta-button">
-                    <MessageCircle size={14} /> Dev post
-                  </a>
-                )}
-                {game.summary && game.summary.length > 0 && (
-                  <button
-                    type="button"
-                    className="btn-outline summary-toggle"
-                    onClick={() => setShowSummary((v) => !v)}
-                    aria-expanded={showSummary}
-                  >
-                    {showSummary ? 'Full study ▲' : '60-second summary ▾'}
-                  </button>
-                )}
-              </div>
-            </FadeIn>
-          </div>
+      {/* Spec sheet. A client scans this before reading a word of prose, which
+          is also why it is worth keeping on screen while they read. */}
+      <div className="dx-spec">
+        <div className="dx-spec__row">
+          <span className="dx-spec__k">Role</span>
+          <span className="dx-spec__v">{game.role}</span>
         </div>
-      </div>
-
-      <div className="portfolio-container game-page-body">
-        <FadeIn>
-          <p className="modal-text modal-text-highlight">{game.desc}</p>
-        </FadeIn>
-
-        {showSummary && game.summary && game.summary.length > 0 && (
-          <div className="case-study-summary">
-            <ul className="case-study-summary-list">
-              {game.summary.map((point, idx) => (
-                <li key={idx}>{point}</li>
-              ))}
-            </ul>
+        <div className="dx-spec__row">
+          <span className="dx-spec__k">Engine</span>
+          <span className="dx-spec__v">{game.engine}</span>
+        </div>
+        <div className="dx-spec__row">
+          <span className="dx-spec__k">Year</span>
+          <span className="dx-spec__v">{game.year}</span>
+        </div>
+        <div className="dx-spec__row">
+          <span className="dx-spec__k">Status</span>
+          <span className={`dx-spec__v dx-dot dx-dot--${game.status}`}>
+            {statusLabel(game.status)}
+          </span>
+        </div>
+        <div className="dx-spec__row">
+          <span className="dx-spec__k">Genre</span>
+          <span className="dx-spec__v">{game.genre.join(', ')}</span>
+        </div>
+        {game.stats && (
+          <div className="dx-spec__row">
+            <span className="dx-spec__k">On itch</span>
+            <span className="dx-spec__v">
+              {game.stats.plays} plays · {game.stats.views} views
+            </span>
           </div>
         )}
+      </div>
+    </>
+  );
 
-        {!showSummary && (
-          <div className="pm-rail">
-            {(game.video?.length || game.gallery?.length) ? (
-              <GameMedia game={game} index={nextIndex()} onPick={setLightboxImage} />
-            ) : null}
+  const heroText = (
+    <>
+      <span className="dx-meta dx-phero__kicker">
+        {game.category === 'client'
+          ? 'Client project'
+          : game.playable
+            ? 'Playable on itch.io'
+            : statusLabel(game.status)}
+      </span>
 
-            {game.features.length > 0 && (
-              <FadeIn>
-                <section id="features" className="modal-section pm-section">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">What it does</h3>
-                  <ul className="modal-list">
-                    {game.features.map((f, idx) => (
-                      <li key={idx}>{f}</li>
-                    ))}
-                  </ul>
-                </section>
-              </FadeIn>
+      <h1
+        className="dx-display dx-h1 dx-phero__title"
+        style={{ fontSize: 'clamp(2.4rem, 5vw, 3.9rem)' }}
+      >
+        {game.title}
+      </h1>
+
+      <p className="dx-phero__hook">{game.hook ?? game.tagline}</p>
+      <p className="dx-body dx-phero__desc">{game.desc}</p>
+
+      <div className="dx-phero__actions">
+        {game.itchUrl && (
+          <a href={game.itchUrl} target="_blank" rel="noopener noreferrer" className="dx-btn">
+            Play it <ArrowUpRight size={14} />
+          </a>
+        )}
+        {game.xPost && (
+          <a
+            href={game.xPost}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dx-btn dx-btn--ghost"
+          >
+            <MessageCircle size={14} /> Dev post
+          </a>
+        )}
+      </div>
+    </>
+  );
+  const localVideos = game.video?.filter((v) => v.startsWith('/') || /\.(mp4|webm)$/i.test(v)) ?? [];
+  const embeds = game.video?.filter((v) => !(v.startsWith('/') || /\.(mp4|webm)$/i.test(v))) ?? [];
+
+  return (
+    <>
+      <header className="dx-header dx-header--scrolled">
+        <div className="dx-shell dx-header__inner">
+          <Link to="/" className="dx-logo">
+            <b>mazicore</b>
+            <span>.</span>
+            <i> godot systems</i>
+          </Link>
+          <nav className="dx-nav">
+            <Link to="/#work">Work</Link>
+            <Link to="/#build">What I build</Link>
+            <Link to="/#contact" className="dx-nav__cta">
+              Start a project
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <div className="dx-shell">
+          <Link to="/#work" className="dx-back">
+            <ArrowLeft size={13} /> All work
+          </Link>
+        </div>
+
+        {/* Three grid children, not a nested main column. DOM order is
+            hero -> sidebar -> article, which is exactly the order a phone
+            should read them in; on desktop the grid lifts the sidebar into
+            column two and spans it across both rows. */}
+        <div className={`dx-shell${useSidebarLayout ? ' dx-plate' : ''}`}>
+          <section className={`dx-phero${useSidebarLayout ? ' dx-plate__head' : ''}`}>
+            {useSidebarLayout ? (
+              heroText
+            ) : (
+              <div className="dx-phero__grid">
+                <div>{heroText}</div>
+                <div className="dx-phero__side">{sideColumn}</div>
+              </div>
             )}
+          </section>
 
-            {game.controls && game.controls.length > 0 && (
-              <FadeIn>
-                <section id="controls" className="modal-section pm-section">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">Controls</h3>
-                  <div className="controls-table">
-                    {game.controls.map((c) => (
-                      <div key={c.action} className="controls-row">
-                        <span>{c.action}</span>
-                        <span className="controls-input">{c.input}</span>
-                      </div>
+          {useSidebarLayout && <aside className="dx-plate__side">{sideColumn}</aside>}
+
+          <article className={`dx-article${useSidebarLayout ? ' dx-plate__body' : ''}`}>
+            {(localVideos.length > 0 || embeds.length > 0 || game.gallery?.length > 0) && (
+              <Section no={next()} title="See it running" id="media">
+                <div className="dx-figs">
+                  {localVideos.map((src, i) => (
+                    <figure key={src} className="dx-fig" style={{ margin: 0 }}>
+                      <video src={src} controls playsInline preload="metadata" poster={game.cover} />
+                      {game.videoNotes?.[i] && <figcaption>{game.videoNotes[i]}</figcaption>}
+                    </figure>
+                  ))}
+                  {embeds.map((src) => (
+                    <figure key={src} className="dx-fig" style={{ margin: 0 }}>
+                      <iframe
+                        src={src}
+                        title={`${game.title} video`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </figure>
+                  ))}
+                </div>
+
+                {game.gallery?.length > 0 && (
+                  <div className="dx-shots">
+                    {game.gallery.map((img) => (
+                      <div
+                        key={img}
+                        className="dx-shot"
+                        style={{ backgroundImage: `url(${img})` }}
+                        onClick={() => setLightbox(img)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Open screenshot"
+                        onKeyDown={(e) => e.key === 'Enter' && setLightbox(img)}
+                      />
                     ))}
                   </div>
-                </section>
-              </FadeIn>
+                )}
+              </Section>
+            )}
+
+            {game.summary && game.summary.length > 0 && (
+              <Section no={next()} title="The short version" id="summary">
+                <ul className="dx-list">
+                  {game.summary.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+
+            {game.features.length > 0 && (
+              <Section no={next()} title="What it does" id="features">
+                <ul className="dx-list">
+                  {game.features.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              </Section>
             )}
 
             {game.client && (
-              <FadeIn>
-                <section id="client" className="modal-section pm-section team-role">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">For a client</h3>
-                  <p className="team-role-myrole">{game.client.myRole}</p>
-                  <div className="team-role-members" style={{ marginTop: '12px' }}>
-                    <span className="team-member-chip">Client</span>
-                    <span className="team-member-chip me">Mazen (Mazicore)</span>
-                  </div>
-                </section>
-              </FadeIn>
+              <Section no={next()} title="Built for a client" id="client">
+                <p>{game.client.myRole}</p>
+                <div className="dx-chips">
+                  <span className="dx-chip">Client brief</span>
+                  <span className="dx-chip dx-chip--me">Mazen — implementation</span>
+                </div>
+              </Section>
             )}
 
-            <FadeIn>
-              <section id="thought" className="modal-section pm-section">
-                <span className="pm-index">{nextIndex()}</span>
-                <h3 className="modal-section-title">The Thought</h3>
-                <p className="modal-text">{game.postmortem.thought}</p>
-              </section>
-            </FadeIn>
+            {game.postmortem.thought && (
+              <Section no={next()} title="The thought" id="thought">
+                <p>{game.postmortem.thought}</p>
+              </Section>
+            )}
 
-            <FadeIn>
-              <section id="mechanics" className="modal-section pm-section">
-                <span className="pm-index">{nextIndex()}</span>
-                <h3 className="modal-section-title">Mechanics</h3>
-                <p className="modal-text">{game.postmortem.mechanics}</p>
-              </section>
-            </FadeIn>
+            {/* A project can be deliberately thin on detail — an unannounced one
+                should not render three empty numbered sections. */}
+            {game.postmortem.mechanics && (
+              <Section no={next()} title="Mechanics" id="mechanics">
+                <p>{game.postmortem.mechanics}</p>
+              </Section>
+            )}
 
-            <FadeIn>
-              <section id="systems" className="modal-section pm-section">
-                <span className="pm-index">{nextIndex()}</span>
-                <h3 className="modal-section-title">Systems</h3>
-                <p className="modal-text">{game.postmortem.systems}</p>
-              </section>
-            </FadeIn>
+            {game.postmortem.systems && (
+              <Section no={next()} title="Systems" id="systems">
+                <p>{game.postmortem.systems}</p>
+              </Section>
+            )}
 
-            {(game.postmortem.architecture || game.postmortem.underTheHood) && (
-              <FadeIn>
-                <section id="architecture" className="modal-section pm-section">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">Under the Hood</h3>
-                  <p className="modal-text">{game.postmortem.underTheHood ?? game.postmortem.architecture}</p>
-                </section>
-              </FadeIn>
+            {(game.postmortem.underTheHood ?? game.postmortem.architecture) && (
+              <Section no={next()} title="Under the hood" id="architecture">
+                <p>{game.postmortem.underTheHood ?? game.postmortem.architecture}</p>
+              </Section>
+            )}
+
+            {game.controls && game.controls.length > 0 && (
+              <Section no={next()} title="Controls" id="controls">
+                <div className="dx-kv">
+                  {game.controls.map((c) => (
+                    <div key={c.action} className="dx-kv__row">
+                      <span>{c.action}</span>
+                      <span className="dx-kv__in">{c.input}</span>
+                    </div>
+                  ))}
+                </div>
+              </Section>
             )}
 
             {game.timeline && game.timeline.length > 0 && (
-              <FadeIn>
-                <section id="timeline" className="modal-section pm-section">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">Timeline</h3>
-                  <div className="pm-timeline">
-                    {game.timeline.map((entry, idx) => (
-                      <div key={idx} className="pm-timeline-item">
-                        <div className="pm-timeline-marker" />
-                        <div className="pm-timeline-content">
-                          <span className="pm-timeline-date">{entry.date}</span>
-                          <h4 className="pm-timeline-title">{entry.title}</h4>
-                          <p className="pm-timeline-body">{entry.body}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </FadeIn>
+              <Section no={next()} title="How it came together" id="timeline">
+                <div className="dx-time">
+                  {game.timeline.map((entry) => (
+                    <div key={entry.title} className="dx-time__item">
+                      <span className="dx-time__d">{entry.date}</span>
+                      <h3 className="dx-time__t">{entry.title}</h3>
+                      <p>{entry.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </Section>
             )}
 
             {game.team && (
-              <FadeIn>
-                <section id="role" className="modal-section pm-section team-role">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">My Role</h3>
-                  <p className="team-role-myrole">{game.team.myRole}</p>
-                  <div className="team-role-members" style={{ marginTop: '12px' }}>
-                    {game.team.members.map((m, idx) => (
-                      <span key={idx} className={`team-member-chip${m.includes('Mazen') ? ' me' : ''}`}>{m}</span>
-                    ))}
-                  </div>
-                </section>
-              </FadeIn>
+              <Section no={next()} title="My role on the team" id="role">
+                <p>{game.team.myRole}</p>
+                <div className="dx-chips">
+                  {game.team.members.map((m) => (
+                    <span key={m} className={`dx-chip${m.includes('Mazen') ? ' dx-chip--me' : ''}`}>
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </Section>
             )}
 
             {game.postmortem.lessons && (
-              <FadeIn>
-                <section id="lessons" className="modal-section pm-section">
-                  <span className="pm-index">{nextIndex()}</span>
-                  <h3 className="modal-section-title">Lessons</h3>
-                  <p className="modal-text">{game.postmortem.lessons}</p>
-                </section>
-              </FadeIn>
+              <Section no={next()} title="What I would do differently" id="lessons">
+                <p>{game.postmortem.lessons}</p>
+              </Section>
             )}
 
-            <FadeIn>
-              <section className="modal-section pm-section">
-                <span className="pm-index">{nextIndex()}</span>
-                <h3 className="modal-section-title">Play & Status</h3>
-                <div className="tech-tags" style={{ marginBottom: '16px' }}>
-                  <span className="tech-tag tech-tag-engine">{game.status}</span>
-                  <span className="tech-tag">{game.engine}</span>
-                  <span className="tech-tag">{game.year}</span>
-                </div>
-                <div className="game-page-actions">
-                  {game.itchUrl && (
-                    <a href={game.itchUrl} target="_blank" rel="noopener noreferrer" className="cta-button">
-                      Play on itch.io <ExternalLink size={14} />
-                    </a>
-                  )}
-                  {game.xPost && (
-                    <a href={game.xPost} target="_blank" rel="noopener noreferrer" className="btn-outline">
-                      <MessageCircle size={14} /> Dev post
-                    </a>
-                  )}
-                </div>
-              </section>
-            </FadeIn>
-          </div>
-        )}
+            {/* If a client vouched for this specific piece of work, it belongs
+                on this page more than anywhere else on the site. */}
+            {vouch && (
+              <Section no={next()} title="What the client said" id="vouch">
+                <figure className="dx-vouch" style={{ margin: 0 }}>
+                  <span className="dx-vouch__mark" aria-hidden="true">
+                    &ldquo;
+                  </span>
+                  <div>
+                    <blockquote className="dx-vouch__quote" style={{ margin: 0 }}>
+                      {vouch.quote}
+                    </blockquote>
+                    <figcaption className="dx-vouch__by">
+                      <span className="dx-vouch__name">{vouch.author}</span>
+                      <span className="dx-vouch__src">
+                        {vouch.source}, {vouch.date}
+                      </span>
+                    </figcaption>
+                  </div>
+                </figure>
+              </Section>
+            )}
+          </article>
+        </div>
 
-        <FadeIn>
-          <div className="cta-bridge">
-            <p className="cta-bridge-text">
-              {game.itchUrl ? 'Play it. Then decide if the systems hold up.' : 'No public build yet. Ask me for a local walkthrough.'}
+        {/* ═══ Closing ═══
+            A reader who just finished a postmortem is at peak intent. The old
+            page ended on "play it", which turns a prospective client into a
+            player and then loses them. Ask for the enquiry here. */}
+        <div className="dx-shell" style={{ paddingBottom: 'var(--band)' }}>
+          <div className="dx-endcta">
+            <h2 className="dx-endcta__t">Need something like this built?</h2>
+            <p style={{ margin: 0, color: 'var(--ink-2)', maxWidth: '52ch' }}>
+              Tell me what the system has to do and where it sits. I'll tell you what that
+              takes, or say straight away if it isn't a fit.
             </p>
-            {game.itchUrl && (
-              <a href={game.itchUrl} target="_blank" rel="noopener noreferrer" className="cta-button">
-                Play {game.title} on itch.io <ExternalLink size={14} />
+            <div className="dx-endcta__actions">
+              <a href={`mailto:${EMAIL}`} className="dx-btn dx-btn--onwell">
+                Start a project <ArrowRight size={14} />
               </a>
-            )}
-            {!game.itchUrl && game.xPost && (
-              <a href={game.xPost} target="_blank" rel="noopener noreferrer" className="cta-button">
-                <MessageCircle size={14} /> Dev post
-              </a>
-            )}
-          </div>
-        </FadeIn>
-      </div>
-
-      {lightboxImage && (
-        <div className="modal-backdrop lightbox-backdrop" onClick={() => setLightboxImage(null)}>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setLightboxImage(null)} aria-label="Close">
-              <ArrowRight size={18} style={{ transform: 'rotate(45deg)' }} />
-            </button>
-            <img src={lightboxImage} alt="Game screenshot" className="lightbox-img" />
+              {game.itchUrl && (
+                <a
+                  href={game.itchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dx-btn"
+                  style={{ background: 'transparent', borderColor: 'var(--rule-well)', color: 'var(--ink)' }}
+                >
+                  Play {game.title} <ArrowUpRight size={14} />
+                </a>
+              )}
+            </div>
           </div>
         </div>
-      )}
+      </main>
 
-      <footer className="site-footer">
-        <div className="portfolio-container footer-inner">
-          <span>© {new Date().getFullYear()} Mazen (Mazicore). All rights reserved.</span>
-          <span className="mono">Built with React + Three.js</span>
+      <footer>
+        <div className="dx-shell dx-footer">
+          <span className="dx-meta">Mazen — Mazicore · Godot systems programming</span>
+          <Link to="/#work" className="dx-meta">
+            All work →
+          </Link>
         </div>
       </footer>
-    </div>
+
+      {lightbox && (
+        <div className="dx-lightbox" onClick={() => setLightbox(null)}>
+          <button className="dx-lightbox__x" aria-label="Close" onClick={() => setLightbox(null)}>
+            <X size={18} />
+          </button>
+          <img src={lightbox} alt="Screenshot" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
+    </>
   );
 }

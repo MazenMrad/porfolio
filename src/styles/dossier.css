@@ -1,0 +1,1710 @@
+/* ═══════════════════════════════════════════════════════════════
+   MAZICORE — technical dossier
+   ───────────────────────────────────────────────────────────────
+   Warm paper, ink, one redline accent, monospace metadata.
+   Project media sits in near-black wells so the games glow against
+   the page instead of dissolving into another dark-on-dark site.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Surface — the original Godot-night palette. */
+  --paper: #070a16;
+  --paper-sunk: #0b1020;
+  --paper-raised: rgba(255, 255, 255, 0.035);
+  --well: #04060d;
+  --well-2: #0a0e1c;
+
+  /* Text */
+  --ink: #eaf2ff;
+  --ink-2: #a9b8d6;
+  --muted: #6b7a9c;
+  --muted-soft: #55648a;
+
+  /* Accent */
+  --accent: #478cbf;
+  --accent-hot: #6fa8dc;
+  --accent-wash: rgba(71, 140, 191, 0.12);
+
+  /* Status */
+  --live: #22e08a;
+  --wip: #ffb020;
+  --godot: #6fa8dc;
+
+  /* Structure */
+  --rule: rgba(255, 255, 255, 0.09);
+  --rule-soft: rgba(255, 255, 255, 0.055);
+  --rule-well: rgba(255, 255, 255, 0.12);
+
+  /* Type */
+  --display: 'Chakra Petch', 'IBM Plex Sans', ui-sans-serif, sans-serif;
+  --sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Rhythm */
+  --gut: clamp(20px, 4vw, 56px);
+  --band: clamp(58px, 6.6vw, 96px);
+  --shell: 1240px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16.5px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Paper tooth. Very low contrast — it should register as texture, not noise. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; }
+
+::selection { background: var(--accent); color: #06101a; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ─── Type scale ─────────────────────────────────────────────── */
+
+.dx-display {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.dx-h1 { font-size: clamp(2.6rem, 6.2vw, 5.1rem); }
+.dx-h2 { font-size: clamp(1.9rem, 3.7vw, 3rem); }
+.dx-h3 { font-size: clamp(1.4rem, 2.2vw, 1.85rem); }
+
+.dx-italic { font-style: italic; font-weight: 600; color: var(--accent-hot); }
+
+.dx-lede {
+  font-size: clamp(1.06rem, 1.5vw, 1.28rem);
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 58ch;
+  margin: 0;
+}
+
+.dx-body { color: var(--ink-2); max-width: 66ch; }
+
+/* Monospace metadata — the spec-sheet voice. */
+.dx-meta {
+  font-family: var(--mono);
+  font-size: 0.685rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── Shell + section frame ──────────────────────────────────── */
+
+.dx-shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: var(--gut);
+}
+
+.dx-band {
+  padding-block: var(--band);
+  border-top: 1px solid var(--rule);
+}
+
+.dx-band--sunk { background: var(--paper-sunk); }
+
+.dx-band--well {
+  background: var(--paper-sunk);
+  color: var(--ink);
+  border-top-color: var(--rule);
+}
+
+/* Numbered section header with a rule that runs to the margin. */
+.dx-slug {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.dx-slug__rule {
+  height: 1px;
+  background: var(--rule);
+}
+
+.dx-band--well .dx-slug__rule { background: var(--rule-well); }
+.dx-band--well .dx-meta { color: var(--muted); }
+
+.dx-slug__no { color: var(--accent); }
+
+.dx-head { max-width: 62ch; margin-bottom: 52px; }
+.dx-head .dx-lede { margin-top: 18px; }
+.dx-band--well .dx-lede { color: var(--ink-2); }
+
+/* ─── Buttons ────────────────────────────────────────────────── */
+
+.dx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 26px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #06101a;
+  transition: transform 0.22s var(--ease), background 0.22s var(--ease),
+    border-color 0.22s var(--ease), color 0.22s var(--ease);
+}
+
+.dx-btn:hover {
+  background: var(--accent-hot);
+  border-color: var(--accent-hot);
+  transform: translateY(-2px);
+}
+
+.dx-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule);
+}
+
+.dx-btn--ghost:hover {
+  background: rgba(71, 140, 191, 0.1);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.dx-btn--onwell {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #06101a;
+}
+
+.dx-btn--onwell:hover { background: var(--accent-hot); border-color: var(--accent-hot); color: #06101a; }
+
+/* A quiet inline link that still reads as clickable. */
+.dx-link {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s var(--ease), gap 0.2s var(--ease);
+}
+
+.dx-link:hover { border-bottom-color: var(--accent); gap: 11px; }
+
+/* ─── Header ─────────────────────────────────────────────────── */
+
+.dx-header {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  /* Opaque from the start. The old header was transparent until scroll, so
+     content slid under the logo and became unreadable mid-scroll. */
+  background: var(--paper);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+
+.dx-header--scrolled {
+  border-bottom-color: var(--rule);
+  box-shadow: 0 1px 24px rgba(0, 0, 0, 0.45);
+}
+
+.dx-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 66px;
+}
+
+.dx-logo {
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dx-logo b { font-weight: 600; }
+.dx-logo span { color: var(--accent); }
+.dx-logo i { font-style: normal; color: var(--muted); font-weight: 400; }
+
+.dx-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.dx-nav a {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-block: 6px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.dx-nav a:hover { color: var(--ink); border-bottom-color: var(--accent); }
+
+.dx-nav__cta {
+  padding: 10px 18px;
+  border: 1px solid var(--accent);
+  color: var(--ink) !important;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.dx-nav__cta:hover {
+  background: var(--accent);
+  color: #06101a !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+.dx-burger {
+  display: none;
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 9px;
+  color: var(--ink);
+}
+
+.dx-mobilenav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px var(--gut) 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.dx-mobilenav a {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+/* ─── Availability pill ──────────────────────────────────────── */
+
+.dx-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 14px 7px 11px;
+  border: 1px solid var(--rule);
+  background: var(--paper-raised);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.dx-status__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 3px rgba(34, 224, 138, 0.16);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dx-status__dot { animation: dx-pulse 2.6s var(--ease) infinite; }
+}
+
+@keyframes dx-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(34, 224, 138, 0.16); }
+  50% { box-shadow: 0 0 0 6px rgba(34, 224, 138, 0.04); }
+}
+
+/* ─── Hero ───────────────────────────────────────────────────── */
+
+.dx-hero {
+  padding-block: clamp(52px, 7vw, 92px) clamp(46px, 6vw, 78px);
+  position: relative;
+  overflow: hidden;
+}
+
+.dx-hero__grid {
+  display: grid;
+  grid-template-columns: 1.06fr 0.94fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+.dx-hero__title { margin: 22px 0 0; }
+
+.dx-hero__lede { margin-top: 24px; }
+
+.dx-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+/* Proof strip. Numbers do the persuading; the label stays quiet. */
+/* A grid, not flex-wrap. Wrapping dropped the fourth stat onto its own line
+   with a dangling divider, which read as a layout bug rather than a stat. */
+.dx-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 42px;
+  border-top: 1px solid var(--rule);
+}
+
+.dx-proof__item {
+  padding: 16px 18px 0 0;
+  border-right: 1px solid var(--rule);
+}
+
+.dx-proof__item:last-child { border-right: none; padding-right: 0; }
+
+.dx-proof__n {
+  font-family: var(--display);
+  font-size: 2rem;
+  line-height: 1;
+  display: block;
+  font-weight: 700;
+}
+
+.dx-proof__l {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 7px;
+  display: block;
+}
+
+/* ─── Media well ─────────────────────────────────────────────── */
+
+/* Media wells.
+   A flat 1px rectangle with square corners reads as a block sitting on the
+   page rather than a screen you are looking into. Three things fix that
+   without going soft: a small radius, a shadow that lifts it off the ground,
+   and an inner hairline so the edge catches light. */
+.dx-well {
+  position: relative;
+  background: var(--well);
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow:
+    0 22px 44px -26px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  transition: transform 0.45s var(--ease), border-color 0.45s var(--ease),
+    box-shadow 0.45s var(--ease);
+}
+
+.dx-well--tall { aspect-ratio: 4 / 3; }
+
+/* HUD corner brackets on hover. A game-UI cue rather than a border that just
+   gets brighter, and it earns the frame instead of drawing one all the time. */
+.dx-well::before,
+.dx-well::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  z-index: 3;
+  pointer-events: none;
+  border-color: var(--accent-hot);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+
+.dx-well::before {
+  top: 11px;
+  left: 11px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+
+.dx-well::after {
+  bottom: 11px;
+  right: 11px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+
+.dx-well__media,
+.dx-well__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease);
+}
+
+.dx-well__media {
+  opacity: 0;
+  transition: opacity 0.45s var(--ease), transform 0.7s var(--ease);
+}
+
+.dx-well__media--on { opacity: 1; }
+
+/* Hover belongs to the whole link, so the frame, the lift and the push-in on
+   the footage all move together instead of firing off separate triggers. */
+a:hover > .dx-well,
+a:focus-visible > .dx-well {
+  transform: translateY(-4px);
+  border-color: rgba(71, 140, 191, 0.55);
+  box-shadow:
+    0 30px 56px -26px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(71, 140, 191, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+a:hover > .dx-well::before,
+a:hover > .dx-well::after,
+a:focus-visible > .dx-well::before,
+a:focus-visible > .dx-well::after {
+  opacity: 1;
+}
+
+a:hover > .dx-well .dx-well__poster,
+a:hover > .dx-well .dx-well__media {
+  transform: scale(1.035);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dx-well,
+  .dx-well__poster,
+  .dx-well__media { transition: none; }
+  a:hover > .dx-well { transform: none; }
+  a:hover > .dx-well .dx-well__poster,
+  a:hover > .dx-well .dx-well__media { transform: none; }
+}
+
+.dx-well__cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 26px 16px 14px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  background: linear-gradient(transparent, rgba(4, 6, 13, 0.94));
+}
+
+.dx-well__flag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(71, 140, 191, 0.92);
+  color: #04121c;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.7);
+}
+
+.dx-well__flag--quiet {
+  background: rgba(10, 16, 30, 0.72);
+  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* ─── Work list ──────────────────────────────────────────────── */
+
+.dx-worklist { display: flex; flex-direction: column; }
+
+/* Each project is a full-width row, not a card in a grid. Rows give the
+   media room to actually be seen and let the copy breathe. */
+.dx-row {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: clamp(24px, 4vw, 60px);
+  align-items: center;
+  padding-block: clamp(30px, 3.4vw, 46px);
+  border-top: 1px solid var(--rule);
+}
+
+.dx-row:first-child { border-top: none; padding-top: 0; }
+
+.dx-row--flip .dx-row__media { order: 2; }
+
+.dx-row__no {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--muted-soft);
+}
+
+.dx-row__title {
+  margin: 10px 0 0;
+  transition: color 0.2s var(--ease);
+}
+
+.dx-row a:hover .dx-row__title { color: var(--accent); }
+
+.dx-row__role {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.dx-row__hook {
+  font-size: 1.06rem;
+  color: var(--ink-2);
+  margin: 16px 0 0;
+  max-width: 46ch;
+}
+
+.dx-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.dx-tag {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 4px 9px;
+}
+
+.dx-tag--engine { color: var(--godot); border-color: rgba(111, 168, 220, 0.38); }
+
+.dx-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+  margin-top: 26px;
+}
+
+/* ─── Capability cards ───────────────────────────────────────── */
+
+/* Fixed columns, not auto-fit. The 1px gap is drawn by the container's
+   background showing through, so any empty cell in the last row rendered as a
+   solid slab of rule colour. Six capabilities divide evenly into three. */
+.dx-caps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (max-width: 980px) {
+  .dx-caps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .dx-caps { grid-template-columns: minmax(0, 1fr); }
+}
+
+.dx-cap {
+  background: var(--paper-sunk);
+  padding: 30px 28px 32px;
+  transition: background 0.25s var(--ease);
+}
+
+.dx-cap:hover { background: rgba(71, 140, 191, 0.06); }
+
+.dx-cap__no {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.dx-cap__t {
+  font-family: var(--display);
+  font-size: 1.45rem;
+  line-height: 1.15;
+  margin: 12px 0 10px;
+  font-weight: 700;
+}
+
+.dx-cap__d {
+  font-size: 0.94rem;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.dx-cap__proof {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--rule);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.dx-cap__proof b { color: var(--ink); font-weight: 600; }
+
+/* ─── Process ────────────────────────────────────────────────── */
+
+.dx-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(22px, 3vw, 40px);
+  counter-reset: step;
+}
+
+.dx-step { position: relative; padding-top: 26px; border-top: 2px solid var(--rule-well); }
+
+.dx-step--done { border-top-color: var(--accent); }
+
+.dx-step__n {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-hot);
+}
+
+.dx-step__t {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  margin: 10px 0 10px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.dx-step__d {
+  font-size: 0.94rem;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* ─── About ──────────────────────────────────────────────────── */
+
+.dx-about {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: clamp(28px, 5vw, 70px);
+  align-items: start;
+}
+
+.dx-about__facts {
+  list-style: none;
+  margin: 30px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.dx-about__facts li {
+  display: grid;
+  grid-template-columns: 116px 1fr;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.94rem;
+}
+
+.dx-about__facts dt,
+.dx-about__k {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 3px;
+}
+
+/* ─── Contact ────────────────────────────────────────────────── */
+
+.dx-contact { display: grid; grid-template-columns: 1fr 0.85fr; gap: clamp(30px, 5vw, 76px); align-items: start; }
+
+.dx-contact__mail {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.1;
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule-well);
+  display: inline-block;
+  padding-bottom: 6px;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  word-break: break-word;
+}
+
+.dx-contact__mail:hover { color: var(--accent-hot); border-bottom-color: var(--accent-hot); }
+
+.dx-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dx-checklist li {
+  position: relative;
+  padding: 11px 0 11px 26px;
+  border-bottom: 1px solid var(--rule-well);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+}
+
+.dx-checklist li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent-hot);
+  font-family: var(--mono);
+}
+
+.dx-socials { display: flex; gap: 10px; margin-top: 30px; }
+
+.dx-social {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rule-well);
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.dx-social:hover { background: var(--accent-hot); border-color: var(--accent-hot); color: #fff; }
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+
+.dx-footer {
+  padding-block: 30px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ─── Reveal ─────────────────────────────────────────────────── */
+
+/* Below-the-fold reveal only. Hero content is never gated behind an
+   observer — the first screen must be readable the instant it paints. */
+.dx-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+.dx-reveal.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dx-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 920px) {
+  .dx-hero__grid,
+  .dx-row,
+  .dx-about,
+  .dx-contact {
+    grid-template-columns: 1fr;
+  }
+
+  .dx-row--flip .dx-row__media { order: 0; }
+  .dx-row { gap: 26px; }
+  .dx-nav { display: none; }
+  .dx-burger { display: block; }
+  .dx-about__facts li { grid-template-columns: 100px 1fr; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .dx-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dx-proof__item { padding: 14px 12px 12px 0; }
+  .dx-proof__item:nth-child(2n) { border-right: none; }
+  .dx-proof__n { font-size: 1.7rem; }
+  .dx-btn { width: 100%; justify-content: center; }
+  .dx-hero__actions { gap: 10px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROJECT PAGE
+   ═══════════════════════════════════════════════════════════════ */
+
+.dx-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-block: 26px;
+  transition: color 0.2s var(--ease), gap 0.2s var(--ease);
+}
+
+.dx-back:hover { color: var(--accent); gap: 12px; }
+
+.dx-phero { padding-bottom: clamp(40px, 5vw, 64px); }
+
+.dx-phero__grid {
+  display: grid;
+  grid-template-columns: 1fr 0.82fr;
+  gap: clamp(28px, 4.5vw, 62px);
+  align-items: start;
+}
+
+.dx-phero__kicker { color: var(--accent); }
+
+.dx-phero__title { margin: 16px 0 0; }
+
+.dx-phero__hook {
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--accent);
+  margin: 18px 0 0;
+  max-width: 30ch;
+}
+
+.dx-phero__desc { margin-top: 22px; }
+
+.dx-phero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+/* Spec sheet — the scannable block a client reads before the prose. */
+.dx-spec {
+  border: 1px solid var(--rule);
+  background: var(--paper-raised);
+  padding: 4px 22px 8px;
+}
+
+.dx-spec__row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.92rem;
+  align-items: baseline;
+}
+
+.dx-spec__row:last-child { border-bottom: none; }
+
+.dx-spec__k {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dx-spec__v { color: var(--ink); }
+
+.dx-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dx-dot::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.dx-dot--live::before { background: var(--live); }
+.dx-dot--wip::before { background: var(--wip); }
+
+/* ─── Article body ───────────────────────────────────────────── */
+
+.dx-article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 780px;
+}
+
+.dx-sec {
+  padding-block: clamp(30px, 3.6vw, 46px);
+  border-top: 1px solid var(--rule);
+}
+
+.dx-sec:first-child { border-top: none; }
+
+.dx-sec__no {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.dx-sec__t {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.1;
+  margin: 10px 0 18px;
+  font-weight: 700;
+}
+
+.dx-sec p { color: var(--ink-2); margin: 0 0 14px; }
+.dx-sec p:last-child { margin-bottom: 0; }
+
+.dx-list { list-style: none; margin: 0; padding: 0; }
+
+.dx-list li {
+  position: relative;
+  padding: 10px 0 10px 26px;
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink-2);
+}
+
+.dx-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.dx-kv { border-top: 1px solid var(--rule-soft); }
+
+.dx-kv__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.dx-kv__in {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ─── Media ──────────────────────────────────────────────────── */
+
+.dx-figs { display: grid; gap: 18px; }
+
+.dx-fig figcaption {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-top: 9px;
+}
+
+/* Captures are not all 16:9 — Godot window grabs come out at whatever the
+   editor was sized to. Forcing a ratio letterboxed them against the well.
+   `preload="metadata"` means the real dimensions arrive early enough that
+   letting the video size itself does not cause a visible jump. */
+.dx-fig video {
+  width: 100%;
+  height: auto;
+  background: var(--well);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: 0 22px 44px -28px rgba(0, 0, 0, 0.95);
+}
+
+.dx-fig iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--well);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: 0 22px 44px -28px rgba(0, 0, 0, 0.95);
+}
+
+.dx-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.dx-shot {
+  aspect-ratio: 4 / 3;
+  background: var(--well) center / cover no-repeat;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  cursor: zoom-in;
+  box-shadow: 0 14px 28px -22px rgba(0, 0, 0, 0.9);
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+
+.dx-shot:hover {
+  transform: translateY(-4px);
+  border-color: rgba(71, 140, 191, 0.6);
+  box-shadow: 0 22px 40px -22px rgba(0, 0, 0, 0.95);
+}
+
+/* ─── Timeline ───────────────────────────────────────────────── */
+
+.dx-time { border-left: 1px solid var(--rule); padding-left: 26px; }
+
+.dx-time__item { position: relative; padding-bottom: 26px; }
+.dx-time__item:last-child { padding-bottom: 0; }
+
+.dx-time__item::before {
+  content: '';
+  position: absolute;
+  left: -31px;
+  top: 7px;
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+}
+
+.dx-time__d {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dx-time__t {
+  font-family: var(--display);
+  font-size: 1.28rem;
+  margin: 6px 0 7px;
+  font-weight: 700;
+}
+
+.dx-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+.dx-chip {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 6px 11px;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.dx-chip--me { border-color: var(--accent); color: var(--accent); }
+
+/* ─── Closing CTA ────────────────────────────────────────────── */
+
+/* The old project page ended on "play it", which converts a reader into a
+   player and then loses them. A client who has just read 2,000 words about
+   your systems is at peak intent — the page should ask for the enquiry. */
+.dx-endcta {
+  margin-top: 12px;
+  padding: clamp(30px, 4vw, 48px);
+  background: var(--well);
+  color: var(--ink);
+  display: grid;
+  gap: 20px;
+}
+
+.dx-endcta__t {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.7vw, 2.1rem);
+  line-height: 1.1;
+  margin: 0;
+  color: var(--ink);
+}
+
+.dx-endcta__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ─── Lightbox ───────────────────────────────────────────────── */
+
+.dx-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(4, 6, 13, 0.95);
+  display: grid;
+  place-items: center;
+  padding: 4vw;
+}
+
+.dx-lightbox img { max-width: 100%; max-height: 88vh; object-fit: contain; }
+
+.dx-lightbox__x {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 1px solid var(--rule-well);
+  color: var(--ink);
+}
+
+.dx-lightbox__x:hover { background: var(--accent-hot); border-color: var(--accent-hot); }
+
+.dx-missing { padding: 16vh 0; text-align: center; }
+
+@media (max-width: 920px) {
+  .dx-phero__grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHOWREEL BANNER
+   ═══════════════════════════════════════════════════════════════ */
+
+.dx-reel {
+  background: var(--well);
+  border-block: 1px solid var(--rule);
+  padding-bottom: 22px;
+}
+
+.dx-reel__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 66vh;
+  min-height: 340px;
+  overflow: hidden;
+  background: var(--well);
+}
+
+.dx-reel__poster,
+.dx-reel__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dx-reel__video {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+
+.dx-reel__video.is-on { opacity: 1; }
+
+/* Copy sits on gameplay footage, which is uncontrolled in colour and busy.
+   A directional scrim is what keeps the text legible over any frame. */
+.dx-reel__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(4, 6, 13, 0.94) 0%, rgba(4, 6, 13, 0.72) 42%, rgba(4, 6, 13, 0.15) 78%),
+    linear-gradient(to top, rgba(4, 6, 13, 0.8), transparent 55%);
+}
+
+.dx-reel__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(26px, 4vw, 52px);
+}
+
+.dx-reel__kicker { color: var(--accent-hot); }
+
+.dx-reel__title {
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 1.04;
+  font-weight: 700;
+  margin: 12px 0 0;
+  color: var(--ink);
+}
+
+.dx-reel__hook {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: var(--ink-2);
+  max-width: 44ch;
+  margin: 14px 0 0;
+}
+
+.dx-reel__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+
+.dx-reel__controls {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  gap: 6px;
+}
+
+.dx-reel__nav {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: rgba(4, 6, 13, 0.62);
+  border: 1px solid var(--rule-well);
+  color: var(--ink);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.dx-reel__nav:hover { background: var(--accent); border-color: var(--accent); color: #06101a; }
+
+/* Progress on the stage edge, where a video scrubber would sit. */
+.dx-reel__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.dx-reel__progress-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--accent-hot);
+  transform-origin: left;
+  animation: dx-tick linear forwards;
+}
+
+/* Slide copy arrives rather than snapping, which sells the crossfade. */
+.dx-reel__caption { animation: dx-slide-in 0.55s var(--ease) both; }
+.dx-reel__poster { animation: dx-fade-in 0.5s var(--ease) both; }
+
+@keyframes dx-slide-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes dx-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── Rail ───────────────────────────────────────────────────── */
+
+.dx-reel__rail {
+  display: flex;
+  gap: 10px;
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0 0 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 14px;
+
+  /* Custom scrollbar. With ten-plus projects the rail genuinely needs one, but
+     the default Chrome bar is a grey rounded pill that belongs to no design.
+     Square, thin, and in the accent colour so it reads as part of the reel. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) rgba(255, 255, 255, 0.06);
+}
+
+.dx-reel__rail::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dx-reel__rail::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+}
+
+.dx-reel__rail::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: none;
+  transition: background 0.2s var(--ease);
+}
+
+.dx-reel__rail::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hot);
+}
+
+/* Edge fades, so it is obvious there are more projects past the cut. */
+.dx-reel__railwrap {
+  position: relative;
+}
+
+.dx-reel__railwrap::before,
+.dx-reel__railwrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 14px;
+  width: 56px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dx-reel__railwrap::before {
+  left: 0;
+  background: linear-gradient(to right, var(--well), transparent);
+}
+
+.dx-reel__railwrap::after {
+  right: 0;
+  background: linear-gradient(to left, var(--well), transparent);
+}
+
+.dx-reel__chip {
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 16px 8px 8px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease),
+    background 0.2s var(--ease), transform 0.2s var(--ease);
+  overflow: hidden;
+}
+
+.dx-reel__chip:hover { transform: translateY(-2px); }
+
+.dx-reel__chiptext {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.dx-reel__engine {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--muted-soft);
+}
+
+.dx-reel__chip:hover { color: var(--ink); border-color: var(--accent); }
+
+.dx-reel__chip.is-active {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.dx-reel__thumb {
+  width: 52px;
+  height: 34px;
+  background: var(--well-2) center / cover no-repeat;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.dx-reel__name {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+}
+
+@keyframes dx-tick {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dx-reel__progress-fill { display: none; }
+  .dx-reel__caption { animation: none; }
+  .dx-reel__video { transition: none; }
+}
+
+@media (max-width: 760px) {
+  .dx-reel__stage { aspect-ratio: 4 / 3; min-height: 300px; }
+  .dx-reel__scrim {
+    background: linear-gradient(to top, rgba(4, 6, 13, 0.95) 18%, rgba(4, 6, 13, 0.35) 70%);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WORK GROUPS — solo / client / jam, restored
+   ═══════════════════════════════════════════════════════════════ */
+
+.dx-group { padding-top: clamp(30px, 4vw, 54px); }
+.dx-group:first-child { padding-top: 0; }
+
+.dx-group__head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.dx-group__title {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.dx-group__rule { height: 1px; background: var(--rule); }
+
+.dx-group__count {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.dx-group__sub {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 12px 0 0;
+  max-width: 56ch;
+}
+
+/* ─── Discord handle ─────────────────────────────────────────── */
+
+.dx-handle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 0;
+}
+
+.dx-handle__copy {
+  background: none;
+  border: 1px dashed var(--rule-well);
+  padding: 7px 13px;
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  color: var(--ink);
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.dx-handle__copy:hover { border-color: var(--accent); color: var(--accent-hot); }
+.dx-handle__copy:active { border-style: solid; }
+
+/* The social row mixes links and a copy button; keep them identical. */
+button.dx-social { background: none; }
+
+/* ─── About object (three.js) ────────────────────────────────── */
+
+.dx-object {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 26px 20px 24px;
+  border: 1px solid var(--rule);
+  background:
+    radial-gradient(120% 90% at 50% 12%, rgba(71, 140, 191, 0.14), transparent 62%),
+    var(--well);
+}
+
+.dx-object__canvas { line-height: 0; }
+.dx-object__canvas canvas { display: block; }
+
+.dx-object__svg { width: min(100%, 320px); height: auto; }
+
+.dx-object__cap {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-align: center;
+  max-width: 34ch;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TESTIMONIAL
+   ═══════════════════════════════════════════════════════════════ */
+
+.dx-vouch {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(18px, 3vw, 38px);
+  align-items: start;
+  padding: clamp(28px, 4vw, 46px);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background:
+    radial-gradient(90% 140% at 0% 0%, rgba(71, 140, 191, 0.1), transparent 62%),
+    var(--paper-sunk);
+  box-shadow: 0 24px 50px -34px rgba(0, 0, 0, 0.9);
+}
+
+.dx-vouch__mark {
+  font-family: var(--display);
+  font-size: clamp(3.4rem, 7vw, 5.4rem);
+  font-weight: 700;
+  line-height: 0.72;
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.dx-vouch__quote {
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+  max-width: 62ch;
+}
+
+.dx-vouch__by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.dx-vouch__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.dx-vouch__src {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.dx-vouch__src::before {
+  content: '·';
+  margin-right: 10px;
+  color: var(--muted-soft);
+}
+
+.dx-vouch__link {
+  margin-left: auto;
+}
+
+@media (max-width: 620px) {
+  .dx-vouch { grid-template-columns: 1fr; }
+  .dx-vouch__mark { line-height: 1; }
+  .dx-vouch__link { margin-left: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROJECT PLATE — continuous two-column layout
+   ───────────────────────────────────────────────────────────────
+   The original page put the hero in its own grid and started the
+   article below the whole thing, so the prose never lined up under
+   the description and the space beside it sat empty for the length
+   of the write-up. Here the article and the description share one
+   column, and the media plus spec sheet ride alongside as a sticky
+   rail — which also means the clip stays on screen while you read
+   about it, instead of being front-loaded and then gone.
+   ═══════════════════════════════════════════════════════════════ */
+
+.dx-plate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(292px, 30%, 372px);
+  column-gap: clamp(30px, 4vw, 66px);
+  align-items: start;
+}
+
+.dx-plate__head {
+  grid-column: 1;
+  grid-row: 1;
+  padding-bottom: clamp(22px, 2.6vw, 34px);
+}
+
+.dx-plate__body {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+  /* The column is already the measure, so the article stops constraining. */
+  max-width: none;
+}
+
+/* The article now follows the description directly, so its first section
+   needs the rule it used to get for free from the section above it. */
+.dx-plate__body .dx-sec:first-child {
+  border-top: 1px solid var(--rule);
+}
+
+.dx-plate__side {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  position: sticky;
+  top: 84px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 980px) {
+  .dx-plate {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 26px;
+  }
+
+  .dx-plate__head { grid-row: 1; }
+  .dx-plate__side { grid-column: 1; grid-row: 2; position: static; }
+  .dx-plate__body { grid-column: 1; grid-row: 3; }
+}
+
+/* Spec sheet in the old side-by-side hero keeps its gap from the media. */
+.dx-phero__side .dx-spec { margin-top: 18px; }

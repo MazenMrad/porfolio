@@ -1,18 +1,25 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './index.css'
-import App from './App.tsx'
-import { GamePage } from './components/GamePage.tsx'
+import { createRoot, hydrateRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import './styles/dossier.css'
+import { AppRoutes } from './routes'
 
-createRoot(document.getElementById('root')!).render(
+const container = document.getElementById('root')!
+
+const tree = (
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/games/:slug" element={<GamePage />} />
-        <Route path="*" element={<App />} />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )
+
+// The prerenderer leaves markup inside #root. Hydrating it keeps the already
+// visible page and just attaches handlers; calling createRoot instead would
+// throw that HTML away and re-render from scratch, which is the flash of blank
+// content that makes people assume prerendering "did not work".
+if (container.hasChildNodes()) {
+  hydrateRoot(container, tree)
+} else {
+  createRoot(container).render(tree)
+}
