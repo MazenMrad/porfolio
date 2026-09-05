@@ -77,11 +77,13 @@ export function GamePage() {
   const clip = game.video?.find((v) => /\.(mp4|webm)$/i.test(v));
   const vouch = testimonials.find((t) => t.project === game.id);
 
-  // Trying a single continuous two-column layout on one project before rolling
-  // it out. In the original the hero was its own grid and the article started
-  // below the whole thing, so the prose never lined up under the description
-  // and the space beside it sat empty for the length of the write-up.
-  const useSidebarLayout = game.id === 'obsidio';
+  // One continuous two-column layout for every project. The original put the
+  // hero in its own grid and started the article below the whole thing, so the
+  // prose never lined up under the description and the space beside it sat
+  // empty for the length of the write-up. Here the description and the article
+  // share a column while the media and spec sheet ride alongside, which also
+  // keeps the clip on screen while you read about it.
+  const useSidebarLayout = true;
 
   const sideColumn = (
     <>
