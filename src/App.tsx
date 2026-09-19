@@ -292,7 +292,7 @@ export default function App() {
               </h1>
 
               <p className="dx-lede dx-hero__lede">
-                Freelance Godot programmer. Combat, inventory, economy, UI. Scoped in
+                Freelance Godot programmer. Combat, inventory, economy, UI, netcode. Scoped in
                 writing, delivered playable, and documented well enough that you don't
                 need me afterwards.
               </p>
@@ -503,7 +503,7 @@ export default function App() {
               </h2>
               <p className="dx-lede" style={{ marginTop: 22 }}>
                 I build 2D game systems in Godot: combat feel, economy loops, signal-driven
-                UI, persistence. If a feature doesn't change how a run feels, it doesn't
+                UI, persistence, netcode. If a feature doesn't change how a run feels, it doesn't
                 ship.
               </p>
               <p className="dx-body" style={{ marginTop: 18 }}>

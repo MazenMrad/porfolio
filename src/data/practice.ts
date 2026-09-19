@@ -57,8 +57,8 @@ export const capabilities: Capability[] = [
   {
     id: 'multiplayer',
     title: 'Multiplayer',
-    desc: 'Server-authoritative turn-based netcode in Godot 4: intent-based clients, per-player filtered state, reconnection. In build, not shipped yet, and I would rather say so.',
-    proof: 'In progress — ask where it is',
+    desc: 'Host-authoritative turn-based netcode in Godot 4. Clients send intents; the host broadcasts redacted views so the opponent hand never rides the wire. Join codes over Ezcha Network, LAN over ENet.',
+    proof: 'Two-player table, Ezcha + LAN',
     proofProject: 'The Last Wager',
   },
 ];
@@ -105,7 +105,7 @@ export interface Fact {
 
 export const facts: Fact[] = [
   { k: 'Engine', v: 'Godot 4 (GDScript). Unity and C# when a project calls for it' },
-  { k: 'Focus', v: '2D systems: combat, economy, inventory, UI, persistence' },
+  { k: 'Focus', v: '2D systems: combat, economy, inventory, UI, persistence, netcode' },
   { k: 'Working with', v: 'Solo devs, small studios, jam teams' },
   { k: 'Engagements', v: 'Fixed-scope systems, plugins, playable prototypes' },
   { k: 'Based', v: 'Remote, and used to working across time zones' },
