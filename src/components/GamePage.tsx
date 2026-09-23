@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, MessageCircle, X } from 'lucide-re
 import { getGame, type GameData } from '../data/games';
 import { testimonials } from '../data/practice';
 import { ProjectMedia } from './ProjectMedia';
+import { ThemeToggle } from './ThemeToggle';
 
 const EMAIL = 'mazicore78@gmail.com';
 
@@ -89,7 +90,7 @@ export function GamePage() {
     <>
       {/* Wide, not 4:3. Gameplay and tool captures are landscape, and a squarer
           well crops the sides. */}
-      <ProjectMedia poster={game.cover} video={clip} alt={`${game.title} gameplay`} />
+      <ProjectMedia poster={game.cover} video={clip} alt={`${game.title} gameplay`} fit={game.mediaFit} />
 
       {/* Spec sheet. A client scans this before reading a word of prose, which
           is also why it is worth keeping on screen while they read. */}
@@ -172,6 +173,9 @@ export function GamePage() {
 
   return (
     <>
+      <a className="dx-skip" href="/#work">
+        Skip to work
+      </a>
       <header className="dx-header dx-header--scrolled">
         <div className="dx-shell dx-header__inner">
           <Link to="/" className="dx-logo">
@@ -181,11 +185,13 @@ export function GamePage() {
           </Link>
           <nav className="dx-nav">
             <Link to="/#work">Work</Link>
+            <Link to="/#clients">Clients</Link>
             <Link to="/#build">What I build</Link>
             <Link to="/#contact" className="dx-nav__cta">
               Start a project
             </Link>
           </nav>
+          <ThemeToggle />
         </div>
       </header>
 

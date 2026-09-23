@@ -6,6 +6,7 @@ import { briefChecklist, capabilities, facts, processSteps, testimonials } from 
 import { ProjectMedia } from './components/ProjectMedia';
 import { Showreel } from './components/Showreel';
 import { SystemsObject } from './components/SystemsObject';
+import { ThemeToggle } from './components/ThemeToggle';
 
 const EMAIL = 'mazicore78@gmail.com';
 const ITCH = 'https://mazicore.itch.io/';
@@ -14,6 +15,7 @@ const DISCORD = 'mazen24';
 
 const NAV = [
   { href: '#work', label: 'Work' },
+  { href: '#clients', label: 'Clients' },
   { href: '#build', label: 'What I build' },
   { href: '#process', label: 'Process' },
   { href: '#about', label: 'About' },
@@ -89,12 +91,11 @@ function Reveal({
   );
 }
 
-function Slug({ no, label }: { no: string; label: string }) {
+function Slug({ label }: { label: string }) {
   return (
     <div className="dx-slug">
-      <span className="dx-meta dx-slug__no">{no}</span>
-      <span className="dx-slug__rule" />
       <span className="dx-meta">{label}</span>
+      <span className="dx-slug__rule" />
     </div>
   );
 }
@@ -115,7 +116,7 @@ function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: b
           : undefined;
 
   return (
-    <Reveal as="article" className={`dx-row${flip ? ' dx-row--flip' : ''}`}>
+    <article className={`dx-row${flip ? ' dx-row--flip' : ''}`}>
       <div className="dx-row__media">
         <Link to={`/games/${game.id}`} aria-label={`${game.title} — read how it was built`}>
           <ProjectMedia
@@ -124,6 +125,7 @@ function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: b
             alt={`${game.title} gameplay`}
             flag={flag}
             flagQuiet={game.category !== 'client' && !game.featured}
+            fit={game.mediaFit}
           />
         </Link>
       </div>
@@ -151,7 +153,7 @@ function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: b
 
         <div className="dx-row__actions">
           <Link to={`/games/${game.id}`} className="dx-link">
-            How it was built <ArrowRight size={13} />
+            How it was built
           </Link>
           {game.playable && game.itchUrl && (
             <a className="dx-link" href={game.itchUrl} target="_blank" rel="noopener noreferrer">
@@ -160,7 +162,7 @@ function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: b
           )}
         </div>
       </div>
-    </Reveal>
+    </article>
   );
 }
 
@@ -184,7 +186,8 @@ export default function App() {
     if (location.hash) {
       const el = document.querySelector(location.hash);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
         return;
       }
     }
@@ -235,6 +238,9 @@ export default function App() {
 
   return (
     <>
+      <a className="dx-skip" href="#work">
+        Skip to work
+      </a>
       <header className={`dx-header${scrolled ? ' dx-header--scrolled' : ''}`}>
         <div className="dx-shell dx-header__inner">
           <Link to="/" className="dx-logo">
@@ -253,6 +259,8 @@ export default function App() {
               Start a project
             </a>
           </nav>
+
+          <ThemeToggle />
 
           <button
             className="dx-burger"
@@ -292,9 +300,9 @@ export default function App() {
               </h1>
 
               <p className="dx-lede dx-hero__lede">
-                Freelance Godot programmer. Combat, inventory, economy, UI, netcode. Scoped in
-                writing, delivered playable, and documented well enough that you don't
-                need me afterwards.
+                Freelance Godot programmer. Combat, inventory, economy, UI, netcode, native
+                extensions. Scoped in writing, delivered playable, and documented well enough
+                that you don't need me afterwards.
               </p>
 
               <div className="dx-hero__actions">
@@ -350,10 +358,10 @@ export default function App() {
         {/* ═══ Work ═══ */}
         <section id="work" className="dx-band">
           <div className="dx-shell">
-            <Slug no="01" label="Selected work" />
+            <Slug label="Selected work" />
             <div className="dx-head">
               <h2 className="dx-display dx-h2">
-                Every project here is <em className="dx-italic">playable</em> or readable.
+                Every project here is playable or readable.
               </h2>
               <p className="dx-lede">
                 Client work first. Every one of these opens into a proper write-up of how
@@ -364,7 +372,7 @@ export default function App() {
             {groups.map((group) => {
               let n = 0;
               return (
-                <div key={group.key} className="dx-group">
+                <div key={group.key} id={group.key === 'client' ? 'clients' : undefined} className="dx-group">
                   <Reveal>
                     <div className="dx-group__head">
                       <span className="dx-group__title">{group.label}</span>
@@ -393,10 +401,10 @@ export default function App() {
         {/* ═══ Capabilities ═══ */}
         <section id="build" className="dx-band dx-band--sunk">
           <div className="dx-shell">
-            <Slug no="02" label="What I build" />
+            <Slug label="What I build" />
             <div className="dx-head">
               <h2 className="dx-display dx-h2">
-                Systems, not <em className="dx-italic">screenshots</em>.
+                Systems, not screenshots.
               </h2>
               <p className="dx-lede">
                 Everything here has shipped in something real. The project it came from
@@ -410,9 +418,8 @@ export default function App() {
                 where the cards were about to appear. */}
             <Reveal>
               <div className="dx-caps">
-                {capabilities.map((cap, i) => (
+                {capabilities.map((cap) => (
                   <div key={cap.id} className="dx-cap">
-                    <span className="dx-cap__no">{String(i + 1).padStart(2, '0')}</span>
                     <h3 className="dx-cap__t">{cap.title}</h3>
                     <p className="dx-cap__d">{cap.desc}</p>
                     <p className="dx-cap__proof">
@@ -428,10 +435,10 @@ export default function App() {
         {/* ═══ Process ═══ */}
         <section id="process" className="dx-band dx-band--well">
           <div className="dx-shell">
-            <Slug no="03" label="How it works" />
+            <Slug label="How it works" />
             <div className="dx-head">
               <h2 className="dx-display dx-h2">
-                No month-long <em className="dx-italic">silences</em>.
+                No month-long silences.
               </h2>
               <p className="dx-lede">
                 Hiring a contractor usually means worrying about three things: scope creep,
@@ -441,15 +448,15 @@ export default function App() {
             </div>
 
             <Reveal>
-              <div className="dx-steps">
+              <ol className="dx-steps">
                 {processSteps.map((step, i) => (
-                  <div key={step.id} className="dx-step dx-step--done">
-                    <span className="dx-step__n">Step {String(i + 1).padStart(2, '0')}</span>
+                  <li key={step.id} className="dx-step">
+                    <span className="dx-step__n">{String(i + 1).padStart(2, '0')}</span>
                     <h3 className="dx-step__t">{step.title}</h3>
                     <p className="dx-step__d">{step.desc}</p>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ol>
             </Reveal>
           </div>
         </section>
@@ -461,7 +468,7 @@ export default function App() {
         {testimonials.length > 0 && (
           <section className="dx-band">
             <div className="dx-shell">
-              <Slug no="04" label="What it's like to work with me" />
+              <Slug label="What it's like to work with me" />
               {testimonials.map((t) => (
                 <Reveal key={t.author}>
                   <figure className="dx-vouch" style={{ margin: 0 }}>
@@ -495,16 +502,16 @@ export default function App() {
         <section id="about" className="dx-band">
           <div className="dx-shell dx-about">
             <div>
-              <Slug no="05" label="About" />
+              <Slug label="About" />
               <h2 className="dx-display dx-h2">
                 Mazen — Godot programmer,
                 <br />
                 CS student.
               </h2>
               <p className="dx-lede" style={{ marginTop: 22 }}>
-                I build 2D game systems in Godot: combat feel, economy loops, signal-driven
-                UI, persistence, netcode. If a feature doesn't change how a run feels, it doesn't
-                ship.
+                I build game systems in Godot: combat feel, economy loops, signal-driven UI,
+                persistence, netcode, and C++ extensions when GDScript cannot reach the
+                hardware. If a feature doesn't change how a run feels, it doesn't ship.
               </p>
               <p className="dx-body" style={{ marginTop: 18 }}>
                 Most of what I do is the unglamorous half of a game: the part that still
@@ -533,9 +540,9 @@ export default function App() {
         <section id="contact" className="dx-band dx-band--well">
           <div className="dx-shell dx-contact">
             <div>
-              <Slug no="06" label="Start a project" />
+              <Slug label="Start a project" />
               <h2 className="dx-display dx-h2">
-                Tell me what you need <em className="dx-italic">built</em>.
+                Tell me what you need built.
               </h2>
               <p className="dx-lede" style={{ marginTop: 20 }}>
                 Email or Discord, whichever's easier. I answer every real message, and

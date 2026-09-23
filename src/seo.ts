@@ -46,7 +46,7 @@ export function routeMeta(siteUrl: string = DEFAULT_SITE_URL): RouteMeta[] {
     path: '/',
     title: 'Mazen — Godot Game Programmer',
     description:
-      'Godot game programmer (Mazicore). I write the systems you feel in play. Shipped tower defense, turn-based combat, inventory tooling, and host-authoritative multiplayer in Godot 4 and GDScript.',
+      'Godot game programmer (Mazicore). I write the systems you feel in play. Shipped tower defense, turn-based combat, inventory tooling, host-authoritative multiplayer, and a Windows NFC GDExtension.',
     image: absolute(base, DEFAULT_IMAGE),
     type: 'website',
   };

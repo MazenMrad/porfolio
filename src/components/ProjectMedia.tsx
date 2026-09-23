@@ -24,6 +24,7 @@ interface ProjectMediaProps {
   flag?: string;
   flagQuiet?: boolean;
   tall?: boolean;
+  fit?: 'cover' | 'contain';
   className?: string;
 }
 
@@ -35,6 +36,7 @@ export function ProjectMedia({
   flag,
   flagQuiet,
   tall,
+  fit = 'cover',
   className = '',
 }: ProjectMediaProps) {
   const wellRef = useRef<HTMLDivElement>(null);
@@ -99,7 +101,7 @@ export function ProjectMedia({
   return (
     <div
       ref={wellRef}
-      className={`dx-well${tall ? ' dx-well--tall' : ''} ${className}`.trim()}
+      className={`dx-well${tall ? ' dx-well--tall' : ''}${fit === 'contain' ? ' dx-well--contain' : ''} ${className}`.trim()}
     >
       {flag && (
         <span className={`dx-well__flag${flagQuiet ? ' dx-well__flag--quiet' : ''}`}>

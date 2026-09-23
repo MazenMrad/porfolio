@@ -17,8 +17,9 @@
   /* Text */
   --ink: #eaf2ff;
   --ink-2: #a9b8d6;
-  --muted: #6b7a9c;
-  --muted-soft: #55648a;
+  /* Both clear 4.5:1 on --paper and on --paper-sunk. The old pair did not. */
+  --muted: #8493b4;
+  --muted-soft: #7787a9;
 
   /* Accent */
   --accent: #478cbf;
@@ -46,6 +47,40 @@
   --shell: 1240px;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Text that sits on the accent fill. */
+  --on-accent: #06101a;
+  --header-shadow: 0 1px 24px rgba(0, 0, 0, 0.45);
+  --step-fill: #1a2744;
+  --step-ink: var(--ink);
+  --step-ink-2: var(--ink-2);
+  --step-meta: var(--accent-hot);
+}
+
+/* White mode. Media wells stay near-black so the games still sit in a frame. */
+html[data-theme='light'] {
+  --paper: #f7f8fb;
+  --paper-sunk: #eef1f6;
+  --paper-raised: rgba(16, 22, 34, 0.045);
+  --ink: #121826;
+  --ink-2: #2a3548;
+  --muted: #3d4c66;
+  --muted-soft: #4a5870;
+  --accent: #1b5f96;
+  --accent-hot: #164e7c;
+  --accent-wash: rgba(27, 95, 150, 0.1);
+  --live: #0c7a48;
+  --wip: #8a5600;
+  --godot: #1b5f96;
+  --rule: rgba(16, 22, 34, 0.12);
+  --rule-soft: rgba(16, 22, 34, 0.07);
+  --rule-well: rgba(16, 22, 34, 0.16);
+  --on-accent: #f7f9fc;
+  --header-shadow: 0 1px 18px rgba(16, 22, 34, 0.08);
+  --step-fill: #10182c;
+  --step-ink: #eaf2ff;
+  --step-ink-2: #b7c4dc;
+  --step-meta: #8eb4d8;
 }
 
 *,
@@ -89,7 +124,7 @@ a { color: inherit; text-decoration: none; }
 img, video { max-width: 100%; display: block; }
 button { font: inherit; cursor: pointer; }
 
-::selection { background: var(--accent); color: #06101a; }
+::selection { background: var(--accent); color: var(--on-accent); }
 
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -155,10 +190,10 @@ button { font: inherit; cursor: pointer; }
   border-top-color: var(--rule);
 }
 
-/* Numbered section header with a rule that runs to the margin. */
+/* Section label with a rule that runs to the margin. */
 .dx-slug {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 18px;
   margin-bottom: 30px;
@@ -171,8 +206,6 @@ button { font: inherit; cursor: pointer; }
 
 .dx-band--well .dx-slug__rule { background: var(--rule-well); }
 .dx-band--well .dx-meta { color: var(--muted); }
-
-.dx-slug__no { color: var(--accent); }
 
 .dx-head { max-width: 62ch; margin-bottom: 52px; }
 .dx-head .dx-lede { margin-top: 18px; }
@@ -192,7 +225,7 @@ button { font: inherit; cursor: pointer; }
   text-transform: uppercase;
   border: 1px solid var(--accent);
   background: var(--accent);
-  color: #06101a;
+  color: var(--on-accent);
   transition: transform 0.22s var(--ease), background 0.22s var(--ease),
     border-color 0.22s var(--ease), color 0.22s var(--ease);
 }
@@ -218,10 +251,10 @@ button { font: inherit; cursor: pointer; }
 .dx-btn--onwell {
   background: var(--accent);
   border-color: var(--accent);
-  color: #06101a;
+  color: var(--on-accent);
 }
 
-.dx-btn--onwell:hover { background: var(--accent-hot); border-color: var(--accent-hot); color: #06101a; }
+.dx-btn--onwell:hover { background: var(--accent-hot); border-color: var(--accent-hot); color: var(--on-accent); }
 
 /* A quiet inline link that still reads as clickable. */
 .dx-link {
@@ -242,6 +275,15 @@ button { font: inherit; cursor: pointer; }
 
 /* ─── Header ─────────────────────────────────────────────────── */
 
+#work,
+#clients,
+#build,
+#process,
+#about,
+#contact {
+  scroll-margin-top: 82px;
+}
+
 .dx-header {
   position: sticky;
   top: 0;
@@ -255,7 +297,7 @@ button { font: inherit; cursor: pointer; }
 
 .dx-header--scrolled {
   border-bottom-color: var(--rule);
-  box-shadow: 0 1px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--header-shadow);
 }
 
 .dx-header__inner {
@@ -281,6 +323,7 @@ button { font: inherit; cursor: pointer; }
   display: flex;
   align-items: center;
   gap: 30px;
+  margin-left: auto;
 }
 
 .dx-nav a {
@@ -306,16 +349,53 @@ button { font: inherit; cursor: pointer; }
 
 .dx-nav__cta:hover {
   background: var(--accent);
-  color: #06101a !important;
+  color: var(--on-accent) !important;
   border-bottom-color: var(--accent) !important;
 }
 
-.dx-burger {
-  display: none;
+.dx-theme {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin-left: 12px;
+  flex-shrink: 0;
   background: none;
   border: 1px solid var(--rule);
-  padding: 9px;
   color: var(--ink);
+  padding: 0;
+}
+
+.dx-theme:hover { border-color: var(--accent); color: var(--accent-hot); }
+
+.dx-burger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 0;
+  color: var(--ink);
+}
+
+.dx-skip {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  padding: 10px 14px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+}
+
+.dx-skip:focus {
+  transform: none;
 }
 
 .dx-mobilenav {
@@ -331,7 +411,7 @@ button { font: inherit; cursor: pointer; }
   font-size: 0.82rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 12px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--rule-soft);
 }
 
@@ -494,6 +574,30 @@ button { font: inherit; cursor: pointer; }
   transition: transform 0.7s var(--ease);
 }
 
+/* A tool window has to stay whole. Cover crops the buttons off a UI capture
+   and reads as a zoom. Match 16:9 so the Godot window fills the frame, and
+   park the flag at the bottom so it does not sit on the title bar. */
+.dx-well--contain {
+  aspect-ratio: 16 / 9;
+}
+
+.dx-well--contain .dx-well__media,
+.dx-well--contain .dx-well__poster {
+  object-fit: contain;
+}
+
+.dx-well--contain .dx-well__flag {
+  top: auto;
+  bottom: 12px;
+}
+
+a:hover > .dx-well--contain .dx-well__poster,
+a:hover > .dx-well--contain .dx-well__media,
+a:focus-visible > .dx-well--contain .dx-well__poster,
+a:focus-visible > .dx-well--contain .dx-well__media {
+  transform: none;
+}
+
 .dx-well__media {
   opacity: 0;
   transition: opacity 0.45s var(--ease), transform 0.7s var(--ease);
@@ -556,7 +660,7 @@ a:hover > .dx-well .dx-well__media {
   padding: 5px 11px;
   border-radius: 999px;
   font-family: var(--mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -651,8 +755,8 @@ a:hover > .dx-well .dx-well__media {
 /* ─── Capability cards ───────────────────────────────────────── */
 
 /* Fixed columns, not auto-fit. The 1px gap is drawn by the container's
-   background showing through, so any empty cell in the last row rendered as a
-   solid slab of rule colour. Six capabilities divide evenly into three. */
+   background showing through, so an empty cell in the last row renders as a
+   solid slab of rule colour. A leftover card stretches across that gap. */
 .dx-caps {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -661,8 +765,13 @@ a:hover > .dx-well .dx-well__media {
   border: 1px solid var(--rule);
 }
 
+@media (min-width: 981px) {
+  .dx-cap:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
+}
+
 @media (max-width: 980px) {
   .dx-caps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dx-cap:last-child:nth-child(odd) { grid-column: 1 / -1; }
 }
 
 @media (max-width: 620px) {
@@ -677,18 +786,11 @@ a:hover > .dx-well .dx-well__media {
 
 .dx-cap:hover { background: rgba(71, 140, 191, 0.06); }
 
-.dx-cap__no {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  color: var(--accent);
-}
-
 .dx-cap__t {
   font-family: var(--display);
   font-size: 1.45rem;
   line-height: 1.15;
-  margin: 12px 0 10px;
+  margin: 0 0 10px;
   font-weight: 700;
 }
 
@@ -710,38 +812,82 @@ a:hover > .dx-well .dx-well__media {
 
 .dx-cap__proof b { color: var(--ink); font-weight: 600; }
 
-/* ─── Process ────────────────────────────────────────────────── */
+/* ─── Process ──────────────────────────────────────────────────
+   Four interlocking plates. The point of one sits in the notch of
+   the next, so the sequence reads as one piece. */
 
 .dx-steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: clamp(22px, 3vw, 40px);
-  counter-reset: step;
+  display: flex;
+  align-items: stretch;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.dx-step { position: relative; padding-top: 26px; border-top: 2px solid var(--rule-well); }
+.dx-step {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  margin-left: -18px;
+  padding: 26px 38px 28px 42px;
+  background:
+    linear-gradient(var(--accent), var(--accent)) top / 100% 3px no-repeat,
+    var(--step-fill);
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%, 22px 50%);
+}
 
-.dx-step--done { border-top-color: var(--accent); }
+.dx-step:first-child {
+  z-index: 4;
+  margin-left: 0;
+  padding-left: 24px;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+}
+
+.dx-step:nth-child(2) { z-index: 3; }
+.dx-step:nth-child(3) { z-index: 2; }
+.dx-step:nth-child(4) { z-index: 1; }
 
 .dx-step__n {
   font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  color: var(--accent-hot);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--step-meta);
 }
 
 .dx-step__t {
   font-family: var(--display);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   margin: 10px 0 10px;
-  color: var(--ink);
+  color: var(--step-ink);
   font-weight: 700;
 }
 
 .dx-step__d {
-  font-size: 0.94rem;
-  color: var(--ink-2);
+  font-size: 0.92rem;
+  color: var(--step-ink-2);
   margin: 0;
+}
+
+@media (max-width: 860px) {
+  .dx-steps { flex-direction: column; gap: 14px; }
+
+  .dx-step,
+  .dx-step:first-child {
+    margin-left: 0;
+    padding: 22px 22px 22px 26px;
+    clip-path: none;
+    border-left: 3px solid var(--accent);
+  }
+
+  .dx-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: -3px;
+    bottom: -14px;
+    width: 3px;
+    height: 14px;
+    background: var(--accent);
+  }
 }
 
 /* ─── About ──────────────────────────────────────────────────── */
@@ -823,8 +969,8 @@ a:hover > .dx-well .dx-well__media {
 .dx-socials { display: flex; gap: 10px; margin-top: 30px; }
 
 .dx-social {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 1px solid var(--rule-well);
@@ -877,7 +1023,8 @@ a:hover > .dx-well .dx-well__media {
   .dx-row--flip .dx-row__media { order: 0; }
   .dx-row { gap: 26px; }
   .dx-nav { display: none; }
-  .dx-burger { display: block; }
+  .dx-theme { margin-left: auto; }
+  .dx-burger { display: grid; margin-left: 8px; }
   .dx-about__facts li { grid-template-columns: 100px 1fr; }
 }
 
@@ -1092,7 +1239,7 @@ a:hover > .dx-well .dx-well__media {
 }
 
 .dx-shot {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   background: var(--well) center / cover no-repeat;
   border: 1px solid var(--rule);
   border-radius: 5px;
@@ -1243,6 +1390,11 @@ a:hover > .dx-well .dx-well__media {
   object-fit: cover;
 }
 
+.dx-reel__poster.is-fit,
+.dx-reel__video.is-fit {
+  object-fit: contain;
+}
+
 .dx-reel__video {
   opacity: 0;
   transition: opacity 0.6s var(--ease);
@@ -1295,8 +1447,8 @@ a:hover > .dx-well .dx-well__media {
 }
 
 .dx-reel__nav {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   background: rgba(4, 6, 13, 0.62);
@@ -1306,7 +1458,7 @@ a:hover > .dx-well .dx-well__media {
   transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
 }
 
-.dx-reel__nav:hover { background: var(--accent); border-color: var(--accent); color: #06101a; }
+.dx-reel__nav:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
 /* Progress on the stage edge, where a video scrubber would sit. */
 .dx-reel__progress {
@@ -1433,7 +1585,7 @@ a:hover > .dx-well .dx-well__media {
 
 .dx-reel__engine {
   font-family: var(--mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   color: var(--muted-soft);
 }

@@ -48,6 +48,7 @@ export function Showreel() {
 
   const [index, setIndex] = useState(firstIndex);
   const [paused, setPaused] = useState(false);
+  const [reduced, setReduced] = useState(false);
   const [onScreen, setOnScreen] = useState(false);
   const [ready, setReady] = useState(false);
   const [taken, setTaken] = useState(false);
@@ -58,7 +59,15 @@ export function Showreel() {
   const touchX = useRef<number | null>(null);
 
   const count = slides.length;
-  const running = !paused && !taken && onScreen && count > 1;
+  const running = !reduced && !paused && !taken && onScreen && count > 1;
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const apply = () => setReduced(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
 
   const go = useCallback(
     (next: number, manual = true) => {
@@ -96,7 +105,7 @@ export function Showreel() {
 
     let cancelled = false;
     const start = () => {
-      if (cancelled || paused) return;
+      if (cancelled || paused || reduced) return;
       el.play()
         .then(() => !cancelled && setReady(true))
         .catch(() => {
@@ -111,16 +120,16 @@ export function Showreel() {
       cancelled = true;
       el.removeEventListener('canplay', start);
     };
-  }, [index, onScreen, paused]);
+  }, [index, onScreen, paused, reduced]);
 
   // Stop when paused or scrolled away, so a decoder is never busy for a banner
   // nobody is looking at.
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
-    if (paused || !onScreen) el.pause();
+    if (paused || !onScreen || reduced) el.pause();
     else el.play().catch(() => {});
-  }, [paused, onScreen]);
+  }, [paused, onScreen, reduced]);
 
   // Arrow keys, but only while the reel is the thing on screen.
   useEffect(() => {
@@ -141,8 +150,8 @@ export function Showreel() {
     const chip = rail?.children[index] as HTMLElement | undefined;
     if (!rail || !chip) return;
     const left = chip.offsetLeft - rail.clientWidth / 2 + chip.clientWidth / 2;
-    rail.scrollTo({ left, behavior: 'smooth' });
-  }, [index]);
+    rail.scrollTo({ left, behavior: reduced ? 'auto' : 'smooth' });
+  }, [index, reduced]);
 
   if (count === 0) return null;
 
@@ -168,7 +177,7 @@ export function Showreel() {
         {/* Both layers are keyed on the slide so React swaps them together and
             the crossfade never shows one game's poster under another's video. */}
         <img
-          className="dx-reel__poster"
+          className={`dx-reel__poster${active.game.mediaFit === 'contain' ? ' is-fit' : ''}`}
           key={`poster-${active.game.id}`}
           src={active.game.cover}
           alt={`${active.game.title} gameplay`}
@@ -176,7 +185,7 @@ export function Showreel() {
         <video
           ref={videoRef}
           key={`video-${active.game.id}`}
-          className={`dx-reel__video${ready ? ' is-on' : ''}`}
+          className={`dx-reel__video${ready ? ' is-on' : ''}${active.game.mediaFit === 'contain' ? ' is-fit' : ''}`}
           src={active.src}
           poster={active.game.cover}
           preload="auto"

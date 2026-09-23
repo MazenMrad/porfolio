@@ -61,6 +61,13 @@ export const capabilities: Capability[] = [
     proof: 'Two-player table, Ezcha + LAN',
     proofProject: 'The Last Wager',
   },
+  {
+    id: 'native',
+    title: 'Native extensions',
+    desc: 'C++ GDExtensions for the calls GDScript cannot make. PC/SC, WinSCard, and a small API the game can pack its own data into.',
+    proof: 'NTAG215 read/write, verified on hardware',
+    proofProject: 'NFC Windows',
+  },
 ];
 
 export interface ProcessStep {
@@ -104,8 +111,8 @@ export interface Fact {
 }
 
 export const facts: Fact[] = [
-  { k: 'Engine', v: 'Godot 4 (GDScript). Unity and C# when a project calls for it' },
-  { k: 'Focus', v: '2D systems: combat, economy, inventory, UI, persistence, netcode' },
+  { k: 'Engine', v: 'Godot 4 (GDScript and C++ GDExtension). Unity and C# when a project calls for it' },
+  { k: 'Focus', v: 'Combat, economy, inventory, UI, persistence, netcode, and Windows-native extensions' },
   { k: 'Working with', v: 'Solo devs, small studios, jam teams' },
   { k: 'Engagements', v: 'Fixed-scope systems, plugins, playable prototypes' },
   { k: 'Based', v: 'Remote, and used to working across time zones' },
@@ -145,5 +152,13 @@ export const testimonials: Testimonial[] = [
     source: 'Game Dev League Discord',
     date: 'August 2026',
     project: 'flamethrower-vfx',
+  },
+  {
+    quote:
+      'Works really efficiently, with good communication and the end result worked as intended. Would commission again',
+    author: 'Algodón',
+    source: 'Godot Café Discord',
+    date: 'September 2026',
+    project: 'nfc-windows',
   },
 ];

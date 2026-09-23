@@ -11,13 +11,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,600;1,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <meta name="theme-color" content="#070a16" />
+    <script>
+      try {
+        var theme = localStorage.getItem('mazicore-theme');
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.dataset.theme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f8fb' : '#070a16');
+        }
+      } catch (e) {}
+    </script>
 </head>
   <body>
     <noscript>
       <style>
         /* Scroll-reveal is driven by an IntersectionObserver. Without JS it
            never fires, so the prerendered content would stay at opacity 0. */
-        .fade-in { opacity: 1 !important; transform: none !important; }
+        .dx-reveal, .fade-in { opacity: 1 !important; transform: none !important; }
       </style>
     </noscript>
     <div id="root"></div>

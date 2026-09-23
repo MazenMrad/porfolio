@@ -11,6 +11,8 @@ export interface GameData {
   gallery: string[];
   video?: string[];
   videoNotes?: string[];
+  /** Tool UIs should show the whole window. Gameplay can crop to fill the frame. */
+  mediaFit?: 'cover' | 'contain';
   genre: string[];
   engine: string;
   itchUrl?: string;
@@ -426,6 +428,75 @@ export const games: GameData[] = [
     },
   },
   {
+    id: 'nfc-windows',
+    title: 'NFC Windows',
+    tagline: 'Put a loadout on an NTAG215. Pick it up on another PC.',
+    hook: 'A Godot GDExtension that talks to a real card reader.',
+    desc: 'A Windows addon for a client’s twin-stick shooter. The player saves a loadout and keybinds onto an NTAG215, then loads that card on another machine. The extension reads and writes up to 100 raw bytes through a PC/SC reader. The game decides what those bytes mean.',
+    role: 'Client programmer · C++ GDExtension',
+    category: 'client',
+    status: 'prototype',
+    year: '2026',
+    cover: '/media/nfc-windows/cover.png',
+    gallery: [],
+    video: ['/media/nfc-windows/demo.mp4'],
+    mediaFit: 'contain',
+    videoNotes: [
+      'The demo scene: refresh readers, open a card, write 1–100 bytes, read them back as hex and UTF-8. This capture is on a PC with no reader attached, so the status line is the error path. The client ran the same scene on their NTAG215 and confirmed open, write, and read.',
+    ],
+    genre: ['GDExtension', 'NFC', 'Windows', 'Tooling'],
+    engine: 'Godot 4.6 · C++',
+    playable: false,
+    client: {
+      myRole:
+        'Commissioned for a Windows desktop twin-stick shooter. I owned the GDExtension, the demo, the docs, and the native tests. The client packs their own loadout in GDScript. They verified it on their NTAG215 cards and a PC/SC reader.',
+    },
+    features: [
+      'Windows x86-64 GDExtension (godot-cpp, WinSCard). MIT licensed, with source and a compiled DLL',
+      'Reads and writes 1–100 raw bytes on an NTAG215, starting at page 4. UID, lock bytes, password, and config pages stay untouched',
+      'open() checks the capability container (E1 10 3E 00) and refuses a different tag before any write',
+      'write_bytes reads every page back and fails with VERIFY_FAILED if the card does not match',
+      'A short write keeps the unused bytes on the last partial page. No header, checksum, or schema is added',
+      'card_error fires once per failed call. Game logic uses numeric codes: no card, removed mid-op, wrong tag, protected, verify failed',
+      'Demo scene lists readers, shows the 7-byte UID, and prints hex plus UTF-8',
+      '15 native tests drive a fake PC/SC transport. The client’s reader was the hardware pass',
+    ],
+    controls: [
+      { action: 'List readers', input: 'Refresh Readers' },
+      { action: 'Start a session', input: 'Open Card' },
+      { action: 'End the session', input: 'Close' },
+      { action: 'Store the payload', input: 'Write + Verify' },
+      { action: 'Read it back', input: 'Read Bytes' },
+    ],
+    timeline: [
+      { date: '2026 · Sep 9', title: 'Scope', body: 'Windows-only GDExtension. Raw bytes on the client’s own NTAG215 cards. GDScript owns the loadout layout. Error signals for a missing card, a pull mid-write, and a failed write. MIT, source plus DLL.' },
+      { date: '2026 · Sep 10–13', title: 'Demo and protocol', body: 'Demo UI with a status line for every failure. Read and write go through one PC/SC transaction per call. Protocol tests run against a simulated reader, so the byte rules were proven before a card was on the desk.' },
+      { date: '2026 · Sep 14', title: 'Handover', body: 'Godot 4.6 project, addon, README, and a demo scene: refresh readers, open the card, write 1–100 characters, read the hex and UTF-8 back.' },
+      { date: '2026 · Sep 15–16', title: 'On their hardware', body: 'The client plugged in their reader and an NTAG215. Open, write, and read matched. They accepted it and left a vouch.' },
+    ],
+    summary: [
+      'Godot 4.6 GDExtension for a client: save a loadout and keybinds on an NTAG215, load that card on another Windows PC.',
+      'The addon moves raw bytes. The game packs and unpacks its own struct.',
+      'Writes start at user page 4, cap at 100 bytes, and verify each page before success.',
+      'Failures are numeric codes (card removed, wrong tag, verify failed), plus one card_error signal.',
+      '15 native tests on a fake PC/SC transport. The client confirmed the same API on a real reader.',
+      'MIT licensed. Delivered as source, DLL, demo, and a short install doc.',
+    ],
+    postmortem: {
+      thought:
+        'The client is making a Windows twin-stick shooter and wanted a player to carry their loadout and keybinds on an NFC card, then drop that card on a different PC and keep playing. They already had NTAG215 cards. They wanted a GDScript tool they could call themselves, with the game in charge of the byte layout.',
+      mechanics:
+        'Plug in a PC/SC reader, hit Refresh Readers, set an NTAG215 on it, and hit Open Card. A 7-byte UID shows up. Type 1–100 characters, hit Write + Verify, then Read Bytes. The demo prints the same payload as hex and as UTF-8.\n\nIn the game, that payload is whatever they pack: a weapon id, a keybind string, a small binary blob. The example in the demo is weapon=laser;move_up=W. The addon does not know it is a loadout.',
+      systems:
+        'User memory starts at NTAG page 4. Each page is 4 bytes. A 100-byte cap keeps a loadout inside the tag with room to spare, which matched their estimate (they expected well under 100, with no named presets).\n\nopen() reads page 3 and requires the capability container E1 10 3E 00, the writable NTAG215 profile. A different card fails as TAG_PROFILE_MISMATCH and nothing is written.\n\nwrite_bytes pads only the last partial page by reading what is already there, writes pages 4 through 28 at most, then reads each page back. A mismatch is VERIFY_FAILED. Bytes after the payload are left as they were. A write is not atomic: if the card leaves mid-call, the recovery is to open again and write the full payload again.',
+      architecture:
+        'NfcReader is a RefCounted Godot class. It forwards to NfcController, which owns the session, then to Ntag215Device, which speaks pages. WinPcscTransport is the only file that calls WinSCard. ReaderProfile encodes the APDU map this reader family uses: FF CA for the UID, FF B0 to read a page, FF D6 to write a page.\n\nThe public method is open(), because connect() already belongs to Object. card_error is emitted once after a failed call. get_last_error_code() is what gameplay should branch on. The message string is for the demo log.\n\nThe 15 native tests script a fake transport: NTAG215 acceptance, a rejected capacity, exact read length, partial-page preserve, verify mismatch, transaction release on a failed read, UID length, multiple readers, and the PC/SC status words for card removed, reset, reader removed, and a protected tag (6982). Godot never has to be open for those.',
+      lessons:
+        'Keeping the schema out of the addon is what made the commission small and safe. I never needed their loadout struct, and they can change it without a new DLL.\n\nThe simulated transport is what let the protocol ship before a reader was available. Their hardware pass is the part I could not sign off myself, and it passed: same demo, their NTAG215, no issues.\n\nThe command map is one reader profile. A driver that does not answer those three APDUs needs its own ReaderProfile, written down from the driver docs, not discovered by writing to unknown pages.',
+    },
+  },
+
+  {
     id: 'spectra-signals',
     title: 'SIGNALS',
     tagline: 'Every transmission is a moral trap. Stamp REPORT or DISCARD.',
@@ -557,29 +628,60 @@ export const games: GameData[] = [
       architecture: 'Roughly 870 lines across three scripts and two shaders. flamethrower.gd owns the parameters and the dirty flag, flame_palettes.gd is a plain colour table, and demo.gd is nothing but the tuning UI. You can delete demo.gd and the effect still works, which was the point.',
     },
   },
-  /* ───────────────────── SOLO — IN DEVELOPMENT ───────────────────── */
+  /* ───────────────────── SOLO — THE FINE LOCK ───────────────────── */
   {
-    id: 'in-development',
-    title: 'Untitled',
-    tagline: 'Solo project, in development.',
-    hook: 'Solo project, in development.',
-    desc: 'An unannounced solo game in Godot 4.6. Not saying much about it yet. The clip below is a short preview.',
-    role: 'Solo · Godot 4.6 · in development',
+    id: 'the-fine-lock',
+    title: 'The Fine Lock',
+    tagline: 'A coarse lock gives the official words. A fine lock can give more.',
+    hook: 'You speak the language. Command does not. Stay in the chair.',
+    desc: 'Night of 14 November 1958, an annexed Baltic coast. You are the radio operator at a listening post. Find a signal, hold the lock, and write what the sheet will accept. This demo is one watch. The full night asks for six entries by dawn.',
+    role: 'Solo programmer · Godot 4.6 · one-room demo',
     category: 'solo',
-    status: 'wip',
+    status: 'prototype',
     year: '2026',
-    cover: '/media/signal-station/cover.png',
-    gallery: [],
-    video: ['/media/signal-station/tutorial-preview.mp4'],
-    videoNotes: ['Early preview.'],
-    genre: ['In development'],
+    cover: '/media/the-fine-lock/01-the-listening-post.jpg',
+    gallery: [
+      '/media/the-fine-lock/01-the-listening-post.jpg',
+      '/media/the-fine-lock/02-intercepting-a-signal.jpg',
+      '/media/the-fine-lock/03-the-district-paper.jpg',
+    ],
+    video: ['/media/the-fine-lock/demo.mp4'],
+    videoNotes: ['Booth recording with the radio audio. The public build is the HTML5 demo on itch.io.'],
+    genre: ['Interactive Fiction', '3D', 'Psychological', 'Singleplayer'],
     engine: 'Godot 4.6',
-    playable: false,
-    features: [],
+    itchUrl: 'https://mazicore.itch.io/the-fine-lock',
+    playable: true,
+    features: [
+      'One watch in the chair: hunt a signal, hold the lock, file what the sheet will accept',
+      'Coarse lock gives the words Command will stamp. Fine lock, held against drift, can show more',
+      'The phrasebook on the desk is the Ministry translation. It is not always what you hear',
+      'The log takes a frequency, a callsign, and a category. It will accept a line you did not fully verify',
+      'Desk tools you pick up: log, newspaper, phone, lighter. Mouse to look. S turns you to the door',
+    ],
+    controls: [
+      { action: 'Look and use the desk', input: 'Mouse' },
+      { action: 'Tune', input: 'A / D or arrow keys' },
+      { action: 'Fine lock', input: 'Hold right mouse while tuning' },
+      { action: 'Pick up a tool', input: 'Click the log, newspaper, phone, lighter' },
+      { action: 'Turn to the door', input: 'S' },
+    ],
+    summary: [
+      'Solo Godot 4.6 demo. One night, one booth, one dial.',
+      'Tuning is the game: a coarse lock and a fine lock do not hear the same transmission.',
+      'The Ministry phrasebook and the log sheet are where you decide what gets written down.',
+      'Playable in the browser on itch.io. A Windows build is the next cut. The night is still in progress, so expect bugs.',
+    ],
     postmortem: {
-      thought: 'Still in development. More once there is something worth showing.',
-      mechanics: '',
-      systems: '',
+      thought:
+        'You are a local in someone else\'s uniform. The officers who read your sheets do not speak the language of the people below the ridge, and you do, so they put you in the chair. The demo is one watch on 14 November 1958. Find a signal, hold the lock, write what the sheet will accept.',
+      mechanics:
+        'The dial is the only twitch in the room. A / D sweeps the band. Holding the right mouse switches to the fine gear, a window about an order of magnitude tighter, and the carrier drifts faster there so a fine lock is a hold, not a parked needle.\n\nA coarse lock is enough for the official words. Stay in the fine window and a second layer can come through: who else is in the room, a tell the phrasebook will not print. Looking away does not freeze the drift. The book, the sheet, and the teletype all cost you the hold.\n\nThe log is a pre-printed Ministry sheet. Frequency fills from the dial. Callsign is chosen from what you might have heard. Category is a stamp: military, civilian, or unknown. Six lines, no second sheet. The form will take a variant you never verified.',
+      systems:
+        'The booth is the interface. There is no inventory screen. You click a tool to pick it up: the log, the newspaper, the phone, the lighter. S turns you toward the door.\n\nRadioReceiver owns the dial and the lock quality and nothing else. It does not draw, and it does not play audio. The sheet files through an event, and nothing calls back into the form. Drift and the fine-lock dwell live on the night, not on the transmission resource, so a restart does not begin the next watch already half-played.\n\nThe phrasebook is the Ministry translation of your own language, issued so officers who do not speak it can pretend to supervise you. Holding it over a live transmission shows the official line. That line is what Command will accept, and it is not always the sentence you heard.',
+      architecture:
+        'Godot 4.6, one room. The dial, the waterfall, the sheet, the phrasebook, and the phone are separate features that meet on an event bus. Lock maths stays in RadioReceiver: coarse window 1.1 kHz, fine window 0.18 kHz, fine drift at 1.6× so the hold stays possible. The public demo is HTML5, one watch. The full night asks for six entries by dawn.',
+      lessons:
+        'The first player asked for a desktop build. In the browser, Escape keeps dropping fullscreen, and a listening game wants you in the chair. A Windows export is in progress. The demo is still being built, so the night has bugs.',
     },
   },
 ];
