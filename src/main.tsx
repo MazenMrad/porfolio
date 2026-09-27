@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import { StrictMode } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
@@ -10,6 +11,7 @@ const tree = (
   <StrictMode>
     <BrowserRouter>
       <AppRoutes />
+      <Analytics />
     </BrowserRouter>
   </StrictMode>
 )
