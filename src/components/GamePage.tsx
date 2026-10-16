@@ -181,7 +181,7 @@ export function GamePage() {
           <Link to="/" className="dx-logo">
             <b>mazicore</b>
             <span>.</span>
-            <i> godot systems</i>
+            <i> game systems</i>
           </Link>
           <nav className="dx-nav">
             <Link to="/#work">Work</Link>
@@ -421,7 +421,7 @@ export function GamePage() {
 
       <footer>
         <div className="dx-shell dx-footer">
-          <span className="dx-meta">Mazen — Mazicore · Godot systems programming</span>
+          <span className="dx-meta">Mazen — Mazicore · Unity and Godot game systems</span>
           <Link to="/#work" className="dx-meta">
             All work →
           </Link>

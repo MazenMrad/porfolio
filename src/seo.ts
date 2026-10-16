@@ -24,7 +24,7 @@ export interface RouteMeta {
   type: 'website' | 'article';
 }
 
-const DEFAULT_IMAGE = '/media/obsidio/editor-capture.gif';
+const DEFAULT_IMAGE = '/media/last-case/cover.png';
 
 function absolute(siteUrl: string, url: string): string {
   if (url.startsWith('http')) return url;
@@ -44,9 +44,27 @@ export function routeMeta(siteUrl: string = DEFAULT_SITE_URL): RouteMeta[] {
 
   const home: RouteMeta = {
     path: '/',
-    title: 'Mazen — Godot Game Programmer',
+    title: 'Mazen — Unity & Godot Game Programmer',
     description:
-      'Godot game programmer (Mazicore). I write the systems you feel in play. Shipped tower defense, turn-based combat, inventory tooling, host-authoritative multiplayer, and a Windows NFC GDExtension.',
+      'Freelance gameplay programmer (Mazicore) working in Unity and Godot. Packing-puzzle solver, tower defense, turn-based combat, inventory tooling, host-authoritative multiplayer, and a Windows NFC GDExtension.',
+    image: absolute(base, DEFAULT_IMAGE),
+    type: 'website',
+  };
+
+  const unity: RouteMeta = {
+    path: '/unity',
+    title: 'Mazen — Unity Gameplay Programmer (Freelance)',
+    description:
+      'Freelance Unity and C# programmer. Rules-first gameplay code, ScriptableObject pipelines, level solvers and tested logic. Shipped Last Case, a packing puzzle with an exact solver.',
+    image: absolute(base, '/media/last-case/cover.png'),
+    type: 'website',
+  };
+
+  const godot: RouteMeta = {
+    path: '/godot',
+    title: 'Mazen — Godot Game Programmer (Freelance)',
+    description:
+      'Freelance Godot programmer. Combat, inventory plugins, economy, netcode and C++ GDExtensions. Four client projects and shipped titles on itch.io.',
     image: absolute(base, DEFAULT_IMAGE),
     type: 'website',
   };
@@ -59,7 +77,7 @@ export function routeMeta(siteUrl: string = DEFAULT_SITE_URL): RouteMeta[] {
     type: 'article',
   }));
 
-  return [home, ...gamePages];
+  return [home, unity, godot, ...gamePages];
 }
 
 /** Escape for insertion into a double-quoted HTML attribute. */
@@ -80,7 +98,7 @@ export function metaTags(meta: RouteMeta, siteUrl: string = DEFAULT_SITE_URL): s
     ['og:image', meta.image],
     ['og:url', url],
     ['og:type', meta.type],
-    ['og:site_name', 'Mazen — Godot Game Programmer'],
+    ['og:site_name', 'Mazen — Unity & Godot Game Programmer'],
     ['twitter:card', 'summary_large_image'],
     ['twitter:title', meta.title],
     ['twitter:description', meta.description],

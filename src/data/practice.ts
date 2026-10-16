@@ -70,6 +70,45 @@ export const capabilities: Capability[] = [
   },
 ];
 
+/** Unity-page equivalents. Same rule as above: every one points at shipped work. */
+export const unityCapabilities: Capability[] = [
+  {
+    id: 'rules',
+    title: 'Rules-first gameplay code',
+    desc: 'Game rules in plain C# with no UnityEngine reference, so the same code runs in the game, in console tests, and in offline tools. Presentation stays a thin layer on top.',
+    proof: 'Engine-free core, two .NET test suites',
+    proofProject: 'Last Case',
+  },
+  {
+    id: 'solver',
+    title: 'Solvers & level tooling',
+    desc: 'An exact solver that scores every level against its optimum, plus a search tool that picks hard levels where greedy play fails. Content you can verify, not just playtest.',
+    proof: '20 levels, 5 picked by search',
+    proofProject: 'Last Case',
+  },
+  {
+    id: 'data',
+    title: 'Data-driven design',
+    desc: 'Items, levels and messages as ScriptableObjects, so designers add content without touching code.',
+    proof: 'Items, rules and levels as assets',
+    proofProject: 'Last Case',
+  },
+  {
+    id: 'systems',
+    title: 'Scoring & narrative systems',
+    desc: 'Hidden scores, consequence queues and branching endings, built as isolated managers that talk through one data object.',
+    proof: '3 hidden scores, 4 endings',
+    proofProject: 'SIGNALS',
+  },
+  {
+    id: 'pipeline',
+    title: 'Build & release pipeline',
+    desc: 'One-click Windows, WebGL and Android builds from editor menu items, with a scripted upload to itch.io.',
+    proof: 'Three platforms from one project',
+    proofProject: 'Last Case',
+  },
+];
+
 export interface ProcessStep {
   id: string;
   title: string;
@@ -101,7 +140,7 @@ export const processSteps: ProcessStep[] = [
   {
     id: 'handover',
     title: 'Handover you can keep',
-    desc: 'Commented GDScript that fits your project structure, plus notes on how the pieces connect. If you never speak to me again, it should still be maintainable.',
+    desc: 'Commented GDScript or C# that fits your project structure, plus notes on how the pieces connect. If you never speak to me again, it should still be maintainable.',
   },
 ];
 
@@ -111,7 +150,7 @@ export interface Fact {
 }
 
 export const facts: Fact[] = [
-  { k: 'Engine', v: 'Godot 4 (GDScript and C++ GDExtension). Unity and C# when a project calls for it' },
+  { k: 'Engines', v: 'Unity 6 and C#. Godot 4 with GDScript and C++ GDExtension' },
   { k: 'Focus', v: 'Combat, economy, inventory, UI, persistence, netcode, and Windows-native extensions' },
   { k: 'Working with', v: 'Solo devs, small studios, jam teams' },
   { k: 'Engagements', v: 'Fixed-scope systems, plugins, playable prototypes' },

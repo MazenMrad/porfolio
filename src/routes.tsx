@@ -13,6 +13,8 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<App />} />
+      <Route path="/unity" element={<App focus="unity" />} />
+      <Route path="/godot" element={<App focus="godot" />} />
       <Route path="/games/:slug" element={<GamePage />} />
       <Route path="*" element={<App />} />
     </Routes>

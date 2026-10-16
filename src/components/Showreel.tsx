@@ -26,7 +26,7 @@ interface Slide {
   src: string;
 }
 
-export function Showreel() {
+export function Showreel({ skipId }: { skipId?: string }) {
   const slides = useMemo<Slide[]>(
     () =>
       games
@@ -42,9 +42,9 @@ export function Showreel() {
   // the featured game, and running the same footage twice on one screen wastes
   // the reel's first and most-watched slide.
   const firstIndex = useMemo(() => {
-    const notFeatured = slides.findIndex((s) => !s.game.featured);
+    const notFeatured = slides.findIndex((s) => s.game.id !== skipId);
     return notFeatured === -1 ? 0 : notFeatured;
-  }, [slides]);
+  }, [slides, skipId]);
 
   const [index, setIndex] = useState(firstIndex);
   const [paused, setPaused] = useState(false);

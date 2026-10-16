@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Mail, Menu, MessageCircle, Play, X } from 'lucide-react';
 import { games, type GameData } from './data/games';
-import { briefChecklist, capabilities, facts, processSteps, testimonials } from './data/practice';
+import {
+  briefChecklist,
+  capabilities,
+  facts,
+  processSteps,
+  testimonials,
+  unityCapabilities,
+} from './data/practice';
 import { ProjectMedia } from './components/ProjectMedia';
 import { Showreel } from './components/Showreel';
 import { SystemsObject } from './components/SystemsObject';
@@ -20,6 +27,96 @@ const NAV = [
   { href: '#process', label: 'Process' },
   { href: '#about', label: 'About' },
 ];
+
+/* ─── Focus ──────────────────────────────────────────────────────
+   One page, three framings. A Unity client and a Godot client are looking for
+   different things, so /unity and /godot lead with their engine's work and
+   copy, and / presents both. Everything below the hero reads from this. */
+export type Focus = 'all' | 'unity' | 'godot';
+
+const FOCUS: Record<
+  Focus,
+  {
+    lead: string;
+    title: React.ReactNode;
+    lede: string;
+    engineStat: [string, string];
+    stats?: [string, string][];
+    featuredId: string;
+    match?: string;
+  }
+> = {
+  all: {
+    lead: 'Available for contract work',
+    title: (
+      <>
+        I build the systems
+        <br />
+        your game <em className="dx-italic">runs on</em>.
+      </>
+    ),
+    lede: "Freelance gameplay programmer in Unity and Godot. Combat, inventory, puzzle rules, economy, UI, netcode, native extensions. Scoped in writing, delivered playable, and documented well enough that you don't need me afterwards.",
+    engineStat: ['Unity + Godot', 'Engines'],
+    featuredId: 'last-case',
+  },
+  unity: {
+    lead: 'Taking Unity contracts',
+    title: (
+      <>
+        Gameplay systems
+        <br />
+        for your <em className="dx-italic">Unity</em> game.
+      </>
+    ),
+    lede: 'Freelance Unity and C# programmer. Rules-first gameplay code, ScriptableObject data pipelines, level tooling and tested logic that runs outside the editor. Scoped in writing, delivered playable.',
+    engineStat: ['Unity 6', 'C# / .NET'],
+    stats: [
+      ['20', 'Levels, solver-checked'],
+      ['3', 'Platforms built'],
+    ],
+    featuredId: 'last-case',
+    match: 'Unity',
+  },
+  godot: {
+    lead: 'Taking Godot contracts',
+    title: (
+      <>
+        I build the systems
+        <br />
+        your <em className="dx-italic">Godot</em> game runs on.
+      </>
+    ),
+    lede: "Freelance Godot programmer. Combat, inventory, economy, UI, netcode, native extensions. Scoped in writing, delivered playable, and documented well enough that you don't need me afterwards.",
+    engineStat: ['Godot 4', 'Primary engine'],
+    featuredId: 'obsidio',
+    match: 'Godot',
+  },
+};
+
+
+const FOCUS_LINKS: { to: string; label: string; focus: Focus }[] = [
+  { to: '/', label: 'All', focus: 'all' },
+  { to: '/unity', label: 'Unity', focus: 'unity' },
+  { to: '/godot', label: 'Godot', focus: 'godot' },
+];
+
+function EngineSwitch({ focus, onNavigate }: { focus: Focus; onNavigate?: () => void }) {
+  return (
+    <div className="dx-switch" role="group" aria-label="Show work by engine">
+      {FOCUS_LINKS.map((l) => (
+        <Link
+          key={l.focus}
+          to={l.to}
+          onClick={onNavigate}
+          className={l.focus === focus ? 'is-on' : undefined}
+          aria-current={l.focus === focus ? 'page' : undefined}
+        >
+          {l.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
 
 /* ─── Reveal on scroll ───────────────────────────────────────────
    Applied to below-the-fold content only. The hero is deliberately not
@@ -104,19 +201,32 @@ function Slug({ label }: { label: string }) {
    Projects are full-width rows rather than cards in a grid. A grid forces
    the media down to thumbnail size, which is the worst possible size for
    demonstrating that a game feels good to play. */
-function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: boolean }) {
+function WorkRow({
+  game,
+  index,
+  flip,
+  lead,
+}: {
+  game: GameData;
+  index: number;
+  flip: boolean;
+  lead: boolean;
+}) {
   const clip = game.video?.find((v) => /\.(mp4|webm)$/i.test(v));
   const flag =
     game.category === 'client'
       ? 'Client work'
-      : game.featured
+      : lead
         ? 'Start here'
         : game.status === 'live'
           ? 'Playable'
           : undefined;
 
   return (
-    <article className={`dx-row${flip ? ' dx-row--flip' : ''}`}>
+    <article
+      className={`dx-row${flip ? ' dx-row--flip' : ''}${lead ? ' dx-row--lead' : ''}`}
+      style={game.accent ? ({ '--game': game.accent } as React.CSSProperties) : undefined}
+    >
       <div className="dx-row__media">
         <Link to={`/games/${game.id}`} aria-label={`${game.title} — read how it was built`}>
           <ProjectMedia
@@ -124,7 +234,7 @@ function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: b
             video={clip}
             alt={`${game.title} gameplay`}
             flag={flag}
-            flagQuiet={game.category !== 'client' && !game.featured}
+            flagQuiet={game.category !== 'client' && !lead}
             fit={game.mediaFit}
           />
         </Link>
@@ -166,7 +276,25 @@ function WorkRow({ game, index, flip }: { game: GameData; index: number; flip: b
   );
 }
 
-export default function App() {
+/* Compact card for the other engine's work on a focused page. It proves the
+   same habits carry over without burying the page's own engine under rows. */
+function MiniCard({ game }: { game: GameData }) {
+  return (
+    <Link
+      to={`/games/${game.id}`}
+      className="dx-mini"
+      style={game.accent ? ({ '--game': game.accent } as React.CSSProperties) : undefined}
+    >
+      <ProjectMedia poster={game.cover} alt={`${game.title} gameplay`} fit={game.mediaFit} />
+      <span className="dx-mini__meta">{game.year} · {game.engine}</span>
+      <span className="dx-mini__title">{game.title}</span>
+      <span className="dx-mini__hook">{game.hook ?? game.tagline}</span>
+    </Link>
+  );
+}
+
+export default function App({ focus = 'all' }: { focus?: Focus }) {
+  const cfg = FOCUS[focus];
   const [scrolled, setScrolled] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
   const location = useLocation();
@@ -194,7 +322,7 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [location.pathname, location.hash]);
 
-  const featured = games.find((g) => g.featured) ?? games[0];
+  const featured = games.find((g) => g.id === cfg.featuredId) ?? games[0];
   const featuredClip = featured.video?.find((v) => /\.(mp4|webm)$/i.test(v));
 
   // Work stays grouped by how it came about, because "who paid for this and
@@ -206,7 +334,7 @@ export default function App() {
   const jamWork = games.filter((g) => g.category === 'jam');
   const labWork = games.filter((g) => g.category === 'experiment');
 
-  const groups = [
+  const allGroups = [
     {
       key: 'client',
       label: 'Client',
@@ -233,8 +361,30 @@ export default function App() {
     },
   ].filter((group) => group.items.length > 0);
 
+  // On /unity and /godot the page's own engine leads in full, and everything
+  // else drops to a compact "also built in" strip.
+  const own = cfg.match ? games.filter((g) => g.engine.includes(cfg.match!)) : [];
+  const other = cfg.match ? games.filter((g) => !g.engine.includes(cfg.match!)) : [];
+  const groups = cfg.match
+    ? [
+        {
+          key: 'own',
+          label: `${cfg.match} work`,
+          sub:
+            focus === 'unity'
+              ? 'Shipped in Unity. The Godot client work further down shows how I deliver for someone else.'
+              : 'Client work, solo releases and jams, all in Godot.',
+          items: [...own].sort(
+            (a, b) =>
+              Number(b.id === featured.id) - Number(a.id === featured.id) ||
+              Number(b.category === 'client') - Number(a.category === 'client')
+          ),
+        },
+      ]
+    : allGroups;
+  const caps = focus === 'unity' ? unityCapabilities : capabilities;
+
   const liveCount = games.filter((g) => g.status === 'live').length;
-  const plays = games.reduce((sum, g) => sum + (g.stats?.plays ?? 0), 0);
 
   return (
     <>
@@ -246,8 +396,10 @@ export default function App() {
           <Link to="/" className="dx-logo">
             <b>mazicore</b>
             <span>.</span>
-            <i> godot systems</i>
+            <i> game systems</i>
           </Link>
+
+          <EngineSwitch focus={focus} />
 
           <nav className="dx-nav">
             {NAV.map((item) => (
@@ -274,6 +426,7 @@ export default function App() {
 
         {navOpen && (
           <nav className="dx-mobilenav">
+            <EngineSwitch focus={focus} onNavigate={() => setNavOpen(false)} />
             {[...NAV, { href: '#contact', label: 'Start a project' }].map((item) => (
               <a key={item.href} href={item.href} onClick={() => setNavOpen(false)}>
                 {item.label}
@@ -290,19 +443,15 @@ export default function App() {
             <div>
               <span className="dx-status">
                 <span className="dx-status__dot" />
-                Available for contract work
+                {cfg.lead}
               </span>
 
               <h1 className="dx-display dx-h1 dx-hero__title">
-                I build the systems
-                <br />
-                your game <em className="dx-italic">runs on</em>.
+                {cfg.title}
               </h1>
 
               <p className="dx-lede dx-hero__lede">
-                Freelance Godot programmer. Combat, inventory, economy, UI, netcode, native
-                extensions. Scoped in writing, delivered playable, and documented well enough
-                that you don't need me afterwards.
+                {cfg.lede}
               </p>
 
               <div className="dx-hero__actions">
@@ -315,21 +464,18 @@ export default function App() {
               </div>
 
               <div className="dx-proof">
+                {(cfg.stats ?? [
+                  [String(clientWork.length), 'Client projects'],
+                  [String(liveCount), 'Titles shipped'],
+                ]).map(([n, l]) => (
+                  <div key={l} className="dx-proof__item">
+                    <span className="dx-proof__n">{n}</span>
+                    <span className="dx-proof__l">{l}</span>
+                  </div>
+                ))}
                 <div className="dx-proof__item">
-                  <span className="dx-proof__n">{clientWork.length}</span>
-                  <span className="dx-proof__l">Client projects</span>
-                </div>
-                <div className="dx-proof__item">
-                  <span className="dx-proof__n">{liveCount}</span>
-                  <span className="dx-proof__l">Titles shipped</span>
-                </div>
-                <div className="dx-proof__item">
-                  <span className="dx-proof__n">{plays}</span>
-                  <span className="dx-proof__l">Plays on itch</span>
-                </div>
-                <div className="dx-proof__item">
-                  <span className="dx-proof__n">Godot&nbsp;4</span>
-                  <span className="dx-proof__l">Primary engine</span>
+                  <span className="dx-proof__n">{cfg.engineStat[0].replace(' ', ' ')}</span>
+                  <span className="dx-proof__l">{cfg.engineStat[1]}</span>
                 </div>
               </div>
             </div>
@@ -353,19 +499,22 @@ export default function App() {
         </section>
 
         {/* ═══ Showreel banner ═══ */}
-        <Showreel />
+        <Showreel skipId={featured.id} />
 
         {/* ═══ Work ═══ */}
         <section id="work" className="dx-band">
           <div className="dx-shell">
-            <Slug label="Selected work" />
+            <Slug label={focus === 'all' ? 'Selected work' : `Selected work · ${cfg.match}`} />
             <div className="dx-head">
               <h2 className="dx-display dx-h2">
-                Every project here is playable or readable.
+                {focus === 'all'
+                  ? 'Every project here is playable or readable.'
+                  : `${cfg.match} work, with the receipts.`}
               </h2>
               <p className="dx-lede">
-                Client work first. Every one of these opens into a proper write-up of how
-                it was built, not just a row of screenshots.
+                {focus === 'all'
+                  ? 'Client work first. Every one of these opens into a proper write-up of how it was built, not just a row of screenshots.'
+                  : 'Every one of these opens into a write-up of how it was built: what worked, what broke, and what I would change.'}
               </p>
             </div>
 
@@ -388,13 +537,42 @@ export default function App() {
                     {group.items.map((game) => {
                       const i = n++;
                       return (
-                        <WorkRow key={game.id} game={game} index={i + 1} flip={i % 2 === 1} />
+                        <WorkRow
+                          key={game.id}
+                          game={game}
+                          index={i + 1}
+                          flip={i % 2 === 1}
+                          lead={game.id === featured.id}
+                        />
                       );
                     })}
                   </div>
                 </div>
               );
             })}
+
+            {cfg.match && other.length > 0 && (
+              <div className="dx-group">
+                <Reveal>
+                  <div className="dx-group__head">
+                    <span className="dx-group__title">
+                      Also built in {cfg.match === 'Unity' ? 'Godot' : 'Unity'}
+                    </span>
+                    <span className="dx-group__rule" />
+                    <span className="dx-group__count">{other.length} projects</span>
+                  </div>
+                  <p className="dx-group__sub">
+                    Same habits, other engine: rules kept away from presentation, written up
+                    afterwards.
+                  </p>
+                </Reveal>
+                <div className="dx-minis">
+                  {other.map((game) => (
+                    <MiniCard key={game.id} game={game} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -418,7 +596,7 @@ export default function App() {
                 where the cards were about to appear. */}
             <Reveal>
               <div className="dx-caps">
-                {capabilities.map((cap) => (
+                {caps.map((cap) => (
                   <div key={cap.id} className="dx-cap">
                     <h3 className="dx-cap__t">{cap.title}</h3>
                     <p className="dx-cap__d">{cap.desc}</p>
@@ -504,14 +682,14 @@ export default function App() {
             <div>
               <Slug label="About" />
               <h2 className="dx-display dx-h2">
-                Mazen — Godot programmer,
+                Mazen — game programmer,
                 <br />
                 CS student.
               </h2>
               <p className="dx-lede" style={{ marginTop: 22 }}>
-                I build game systems in Godot: combat feel, economy loops, signal-driven UI,
-                persistence, netcode, and C++ extensions when GDScript cannot reach the
-                hardware. If a feature doesn't change how a run feels, it doesn't ship.
+                I build game systems in Unity and Godot: combat feel, puzzle rules, economy loops,
+                data-driven content, persistence, netcode, and C++ extensions when GDScript
+                cannot reach the hardware. If a feature doesn't change how a run feels, it doesn't ship.
               </p>
               <p className="dx-body" style={{ marginTop: 18 }}>
                 Most of what I do is the unglamorous half of a game: the part that still
@@ -613,7 +791,7 @@ export default function App() {
 
       <footer>
         <div className="dx-shell dx-footer">
-          <span className="dx-meta">Mazen — Mazicore · Godot systems programming</span>
+          <span className="dx-meta">Mazen — Mazicore · Unity and Godot game systems</span>
           <span className="dx-meta">© {new Date().getFullYear()}</span>
         </div>
       </footer>
