@@ -51,11 +51,15 @@ function buildHtml(appHtml, meta) {
   return html.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
 }
 
+// shortcut: lastmod is the build date, not per-page edit dates; use git dates if pages start changing independently.
+const lastmod = new Date().toISOString().slice(0, 10);
+
 function sitemap(routes) {
   const urls = routes
     .map(
       (meta) =>
         `  <url>\n    <loc>${siteUrl}${meta.path === '/' ? '/' : meta.path}</loc>\n` +
+        `    <lastmod>${lastmod}</lastmod>\n` +
         `    <changefreq>monthly</changefreq>\n` +
         `    <priority>${meta.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`
     )

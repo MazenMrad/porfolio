@@ -3,6 +3,7 @@ import { StrictMode } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './styles/dossier.css'
+import './styles/ticket.css';
 import { AppRoutes } from './routes'
 
 const container = document.getElementById('root')!

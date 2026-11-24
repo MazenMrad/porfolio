@@ -6,7 +6,7 @@ const KEY = 'mazicore-theme';
 function paint(theme: 'light' | 'dark') {
   document.documentElement.dataset.theme = theme;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f8fb' : '#070a16');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f7f5' : '#161616');
   try {
     localStorage.setItem(KEY, theme);
   } catch {
@@ -15,10 +15,10 @@ function paint(theme: 'light' | 'dark') {
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const current = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    const current = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
     setTheme(current);
   }, []);
 

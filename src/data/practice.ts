@@ -125,45 +125,32 @@ export const processSteps: ProcessStep[] = [
   {
     id: 'scope',
     title: 'Scope in writing',
-    desc: 'Before any code: what I am building, what I am not, and what finished means. You sign off on it, and it is the thing we both point at later.',
+    desc: "What I build, what I don't, and what finished means. You sign it off first.",
   },
   {
     id: 'playable',
     title: 'Playable first',
-    desc: 'The first milestone is something you can run, not a document. Playing a system beats reading about one when you are deciding whether it is right.',
+    desc: 'The first milestone is something you can run, not a document.',
   },
   {
     id: 'weekly',
     title: 'Weekly builds',
-    desc: 'A build and a short written update every week. You will never wonder where things are, and nothing turns into a surprise at the end of a milestone.',
+    desc: 'A build and a short written update every week. No surprises.',
   },
   {
     id: 'handover',
     title: 'Handover you can keep',
-    desc: 'Commented GDScript or C# that fits your project structure, plus notes on how the pieces connect. If you never speak to me again, it should still be maintainable.',
+    desc: 'Commented code that fits your project, plus notes on how it connects.',
   },
 ];
 
-export interface Fact {
-  k: string;
-  v: string;
-}
 
-export const facts: Fact[] = [
-  { k: 'Engines', v: 'Unity 6 and C#. Godot 4 with GDScript and C++ GDExtension' },
-  { k: 'Focus', v: 'Combat, economy, inventory, UI, persistence, netcode, and Windows-native extensions' },
-  { k: 'Working with', v: 'Solo devs, small studios, jam teams' },
-  { k: 'Engagements', v: 'Fixed-scope systems, plugins, playable prototypes' },
-  { k: 'Based', v: 'Remote, and used to working across time zones' },
-];
 
 /** What to put in a first email, so my reply can be useful instead of a form. */
 export const briefChecklist: string[] = [
-  'What the game is, in a sentence or two',
-  'The system you need built, and where it sits',
-  'Engine and version, and whether there is a codebase already',
+  'What the game is and the system you need built',
+  'Engine, version, and whether there is a codebase already',
   'Rough timeline and budget range',
-  'A build or repo I can look at, if one exists',
 ];
 
 export interface Testimonial {
