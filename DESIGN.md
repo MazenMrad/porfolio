@@ -4,7 +4,7 @@ The portfolio is a contractor's signed work order: white stock, black ink, ruled
 
 ## Colour (strategy: restrained, one stamp colour)
 
-- Stock (default, light): ground `#f7f7f5`, sunk band `#efefeb`, raised field `#ffffff`, ink `#151515`, secondary ink `#33332f`, muted `#5b5b57`, hairline `#d9d9d4`.
+- Stock (default, light): ground `#ffffff`, sunk band `#f3f3f1`, raised field `#ffffff`, ink `#151515`, secondary ink `#33332f`, muted `#5b5b57`, hairline `#d9d9d4`.
 - Carbon copy (`data-theme="dark"`): ground `#161616`, ink `#ecebe6`, muted `#a9a8a2`, hairline `#3a3a38`, stamp `#ff5a43`.
 - Stamp red `#c4210f`: the primary action, emphasis underlines, the logo dot, hover borders. Never a fill behind body text.
 - Media wells stay near-black `#1b1b1a` in both themes.

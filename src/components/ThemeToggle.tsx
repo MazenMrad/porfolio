@@ -6,7 +6,7 @@ const KEY = 'mazicore-theme';
 function paint(theme: 'light' | 'dark') {
   document.documentElement.dataset.theme = theme;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f7f5' : '#161616');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#161616');
   try {
     localStorage.setItem(KEY, theme);
   } catch {

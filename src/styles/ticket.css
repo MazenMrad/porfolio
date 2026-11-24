@@ -11,8 +11,8 @@
 /* The explicit light selector outranks dossier.css's own light block. */
 :root,
 html[data-theme='light'] {
-  --paper: #f7f7f5;
-  --paper-sunk: #efefeb;
+  --paper: #ffffff;
+  --paper-sunk: #f3f3f1;
   --paper-raised: #ffffff;
   --well: #1b1b1a;
   --well-2: #242423;
