@@ -5,20 +5,19 @@ import { games, type GameData } from './data/games';
 import {
   briefChecklist,
   capabilities,
-  facts,
   processSteps,
   testimonials,
   unityCapabilities,
 } from './data/practice';
 import { ProjectMedia } from './components/ProjectMedia';
-import { Showreel } from './components/Showreel';
-import { SystemsObject } from './components/SystemsObject';
 import { ThemeToggle } from './components/ThemeToggle';
 
 const EMAIL = 'mazicore78@gmail.com';
 const ITCH = 'https://mazicore.itch.io/';
 const X_URL = 'https://x.com/CoreMazi27888';
 const DISCORD = 'mazen24';
+
+const HEADLINE_IDS = ['last-case', 'obsidio', 'the-fine-lock'];
 
 const NAV = [
   { href: '#work', label: 'Work' },
@@ -188,15 +187,6 @@ function Reveal({
   );
 }
 
-function Slug({ label }: { label: string }) {
-  return (
-    <div className="dx-slug">
-      <span className="dx-meta">{label}</span>
-      <span className="dx-slug__rule" />
-    </div>
-  );
-}
-
 /* ─── Work row ───────────────────────────────────────────────────
    Projects are full-width rows rather than cards in a grid. A grid forces
    the media down to thumbnail size, which is the worst possible size for
@@ -343,23 +333,21 @@ export default function App({ focus = 'all' }: { focus?: Focus }) {
     },
     {
       key: 'solo',
-      label: 'Solo',
+      label: 'Solo releases',
       sub: 'Mine start to finish. Design, code, ship, and whatever breaks after.',
-      items: soloWork,
+      items: soloWork.filter((g) => HEADLINE_IDS.includes(g.id)),
     },
     {
-      key: 'jam',
-      label: 'Jam & team',
-      sub: 'Godot work under jam pressure, with other people counting on it.',
-      items: jamWork,
-    },
-    {
-      key: 'lab',
-      label: 'Experiments',
-      sub: 'Built to answer a question rather than to ship anything.',
-      items: labWork,
+      key: 'more',
+      label: 'More work',
+      sub: 'Other solo releases, jam games and experiments. Each one has a write-up.',
+      items: [...soloWork.filter((g) => !HEADLINE_IDS.includes(g.id)), ...jamWork, ...labWork],
     },
   ].filter((group) => group.items.length > 0);
+
+  // Only the strongest proof gets a full row: client work plus the two
+  // flagship releases. Everything else is a small card, so the page stays short.
+  const isHeadline = (g: GameData) => g.category === 'client' || HEADLINE_IDS.includes(g.id);
 
   // On /unity and /godot the page's own engine leads in full, and everything
   // else drops to a compact "also built in" strip.
@@ -412,6 +400,11 @@ export default function App({ focus = 'all' }: { focus?: Focus }) {
             </a>
           </nav>
 
+          {/* Below the nav breakpoint the action stays one tap away in the header. */}
+          <a href="#contact" className="dx-headcta">
+            Start a project
+          </a>
+
           <ThemeToggle />
 
           <button
@@ -437,216 +430,98 @@ export default function App({ focus = 'all' }: { focus?: Focus }) {
       </header>
 
       <main>
-        {/* ═══ Hero ═══ */}
+        {/* ═══ Cover ═══ */}
         <section className="dx-hero">
           <div className="dx-shell dx-hero__grid">
-            <div>
-              <span className="dx-status">
-                <span className="dx-status__dot" />
-                {cfg.lead}
-              </span>
-
-              <h1 className="dx-display dx-h1 dx-hero__title">
-                {cfg.title}
-              </h1>
-
-              <p className="dx-lede dx-hero__lede">
-                {cfg.lede}
-              </p>
+            <div className="dx-hero__body">
+              <h1 className="dx-display dx-h1 dx-hero__title">{cfg.title}</h1>
+              <p className="dx-lede dx-hero__lede">{cfg.lede}</p>
 
               <div className="dx-hero__actions">
                 <a href="#contact" className="dx-btn">
-                  Start a project <ArrowRight size={14} />
+                  Start a project <ArrowRight size={16} strokeWidth={3} />
                 </a>
-                <a href="#work" className="dx-btn dx-btn--ghost">
+                <a href="#work" className="dx-link">
                   See the work
                 </a>
               </div>
 
-              <div className="dx-proof">
+              <p className="dx-record">
+                <b>{cfg.lead}.</b>{' '}
                 {(cfg.stats ?? [
                   [String(clientWork.length), 'Client projects'],
                   [String(liveCount), 'Titles shipped'],
-                ]).map(([n, l]) => (
-                  <div key={l} className="dx-proof__item">
-                    <span className="dx-proof__n">{n}</span>
-                    <span className="dx-proof__l">{l}</span>
-                  </div>
-                ))}
-                <div className="dx-proof__item">
-                  <span className="dx-proof__n">{cfg.engineStat[0].replace(' ', ' ')}</span>
-                  <span className="dx-proof__l">{cfg.engineStat[1]}</span>
-                </div>
-              </div>
-            </div>
-
-            <a
-              href={featured.itchUrl ?? ITCH}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Play ${featured.title} on itch.io`}
-            >
-              <ProjectMedia
-                poster={featured.cover}
-                video={featuredClip}
-                alt={`${featured.title} gameplay`}
-                caption={`${featured.title} — ${featured.tagline}`}
-                flag="Play it"
-                tall
-              />
-            </a>
-          </div>
-        </section>
-
-        {/* ═══ Showreel banner ═══ */}
-        <Showreel skipId={featured.id} />
-
-        {/* ═══ Work ═══ */}
-        <section id="work" className="dx-band">
-          <div className="dx-shell">
-            <Slug label={focus === 'all' ? 'Selected work' : `Selected work · ${cfg.match}`} />
-            <div className="dx-head">
-              <h2 className="dx-display dx-h2">
-                {focus === 'all'
-                  ? 'Every project here is playable or readable.'
-                  : `${cfg.match} work, with the receipts.`}
-              </h2>
-              <p className="dx-lede">
-                {focus === 'all'
-                  ? 'Client work first. Every one of these opens into a proper write-up of how it was built, not just a row of screenshots.'
-                  : 'Every one of these opens into a write-up of how it was built: what worked, what broke, and what I would change.'}
+                ])
+                  .map(([n, l]) => `${n} ${l.toLowerCase()}`)
+                  .join(', ')}
+                , {cfg.engineStat[0]}.
               </p>
             </div>
 
-            {groups.map((group) => {
-              let n = 0;
-              return (
-                <div key={group.key} id={group.key === 'client' ? 'clients' : undefined} className="dx-group">
-                  <Reveal>
-                    <div className="dx-group__head">
-                      <span className="dx-group__title">{group.label}</span>
-                      <span className="dx-group__rule" />
-                      <span className="dx-group__count">
-                        {group.items.length} project{group.items.length > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <p className="dx-group__sub">{group.sub}</p>
-                  </Reveal>
-
-                  <div className="dx-worklist">
-                    {group.items.map((game) => {
-                      const i = n++;
-                      return (
-                        <WorkRow
-                          key={game.id}
-                          game={game}
-                          index={i + 1}
-                          flip={i % 2 === 1}
-                          lead={game.id === featured.id}
-                        />
-                      );
-                    })}
-                  </div>
+            {/* The latest job, filed as a ticket: the proof sits beside the pitch. */}
+            <article className="dx-ticket" aria-label={`Latest job: ${featured.title}`}>
+              <div className="dx-ticket__head">
+                <span>Latest job</span>
+                <span>{featured.year}</span>
+              </div>
+              <a
+                href={featured.itchUrl ?? ITCH}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Play ${featured.title} on itch.io`}
+              >
+                <ProjectMedia
+                  poster={featured.cover}
+                  video={featuredClip}
+                  alt={`${featured.title} gameplay`}
+                  flag="Play it"
+                  priority
+                />
+              </a>
+              <dl className="dx-fields">
+                <div className="dx-field">
+                  <dt>Job</dt>
+                  <dd>
+                    <b>{featured.title}</b>, {featured.tagline}
+                  </dd>
                 </div>
-              );
-            })}
-
-            {cfg.match && other.length > 0 && (
-              <div className="dx-group">
-                <Reveal>
-                  <div className="dx-group__head">
-                    <span className="dx-group__title">
-                      Also built in {cfg.match === 'Unity' ? 'Godot' : 'Unity'}
+                <div className="dx-field">
+                  <dt>Engine</dt>
+                  <dd>{featured.engine}</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Role</dt>
+                  <dd>{featured.role}</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Status</dt>
+                  <dd>
+                    <span className={`dx-dot dx-dot--${featured.status === 'live' ? 'live' : 'wip'}`}>
+                      {featured.status === 'live' ? 'Playable' : 'In progress'}
                     </span>
-                    <span className="dx-group__rule" />
-                    <span className="dx-group__count">{other.length} projects</span>
-                  </div>
-                  <p className="dx-group__sub">
-                    Same habits, other engine: rules kept away from presentation, written up
-                    afterwards.
-                  </p>
-                </Reveal>
-                <div className="dx-minis">
-                  {other.map((game) => (
-                    <MiniCard key={game.id} game={game} />
-                  ))}
+                  </dd>
                 </div>
+              </dl>
+              <div className="dx-ticket__foot">
+                <Link to={`/games/${featured.id}`} className="dx-link">
+                  How it was built
+                </Link>
+                {featured.playable && featured.itchUrl && (
+                  <a className="dx-link" href={featured.itchUrl} target="_blank" rel="noopener noreferrer">
+                    Play it <ArrowUpRight size={13} />
+                  </a>
+                )}
               </div>
-            )}
-          </div>
-        </section>
-
-        {/* ═══ Capabilities ═══ */}
-        <section id="build" className="dx-band dx-band--sunk">
-          <div className="dx-shell">
-            <Slug label="What I build" />
-            <div className="dx-head">
-              <h2 className="dx-display dx-h2">
-                Systems, not screenshots.
-              </h2>
-              <p className="dx-lede">
-                Everything here has shipped in something real. The project it came from
-                is listed underneath.
-              </p>
-            </div>
-
-            {/* One reveal around the whole grid, not one per cell. The 1px
-                gaps are the container's background showing through, so fading
-                cells in individually left a bare slab of rule colour sitting
-                where the cards were about to appear. */}
-            <Reveal>
-              <div className="dx-caps">
-                {caps.map((cap) => (
-                  <div key={cap.id} className="dx-cap">
-                    <h3 className="dx-cap__t">{cap.title}</h3>
-                    <p className="dx-cap__d">{cap.desc}</p>
-                    <p className="dx-cap__proof">
-                      {cap.proof} — <b>{cap.proofProject}</b>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ═══ Process ═══ */}
-        <section id="process" className="dx-band dx-band--well">
-          <div className="dx-shell">
-            <Slug label="How it works" />
-            <div className="dx-head">
-              <h2 className="dx-display dx-h2">
-                No month-long silences.
-              </h2>
-              <p className="dx-lede">
-                Hiring a contractor usually means worrying about three things: scope creep,
-                someone going quiet, and being left with code nobody can maintain. Here's
-                what I do about each.
-              </p>
-            </div>
-
-            <Reveal>
-              <ol className="dx-steps">
-                {processSteps.map((step, i) => (
-                  <li key={step.id} className="dx-step">
-                    <span className="dx-step__n">{String(i + 1).padStart(2, '0')}</span>
-                    <h3 className="dx-step__t">{step.title}</h3>
-                    <p className="dx-step__d">{step.desc}</p>
-                  </li>
-                ))}
-              </ol>
-            </Reveal>
+            </article>
           </div>
         </section>
 
         {/* ═══ Vouch ═══
-            Placed directly after Process on purpose. Process claims I am quick
-            to respond and easy to work with; this is a client saying it, which
-            is worth more than the claim. */}
+            Right under the hero: a client saying it beats anything I say about
+            myself, so it sits where most visitors still are. */}
         {testimonials.length > 0 && (
           <section className="dx-band">
             <div className="dx-shell">
-              <Slug label="What it's like to work with me" />
               {testimonials.map((t) => (
                 <Reveal key={t.author}>
                   <figure className="dx-vouch" style={{ margin: 0 }}>
@@ -676,49 +551,221 @@ export default function App({ focus = 'all' }: { focus?: Focus }) {
           </section>
         )}
 
-        {/* ═══ About ═══ */}
-        <section id="about" className="dx-band">
-          <div className="dx-shell dx-about">
-            <div>
-              <Slug label="About" />
+        {/* ═══ Work ═══ */}
+        <section id="work" className="dx-band">
+          <div className="dx-shell">
+            <div className="dx-head">
               <h2 className="dx-display dx-h2">
-                Mazen — game programmer,
-                <br />
-                CS student.
+                {focus === 'all'
+                  ? 'Every project here is playable or readable.'
+                  : `${cfg.match} work, with the receipts.`}
               </h2>
-              <p className="dx-lede" style={{ marginTop: 22 }}>
-                I build game systems in Unity and Godot: combat feel, puzzle rules, economy loops,
-                data-driven content, persistence, netcode, and C++ extensions when GDScript
-                cannot reach the hardware. If a feature doesn't change how a run feels, it doesn't ship.
+              <p className="dx-lede">
+                {focus === 'all'
+                  ? 'Client work first. Every one of these opens into a proper write-up of how it was built, not just a row of screenshots.'
+                  : 'Every one of these opens into a write-up of how it was built: what worked, what broke, and what I would change.'}
               </p>
-              <p className="dx-body" style={{ marginTop: 18 }}>
-                Most of what I do is the unglamorous half of a game: the part that still
-                has to work a month after the deadline. I write a postmortem for every
-                project, partly because the reasoning matters more than the result, and
-                partly so you can see how I think before you hire me.
-              </p>
-
-              <ul className="dx-about__facts">
-                {facts.map((fact) => (
-                  <li key={fact.k}>
-                    <span className="dx-about__k">{fact.k}</span>
-                    <span>{fact.v}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
 
+            {groups.map((group) => {
+              let n = 0;
+              return (
+                <div key={group.key} id={group.key === 'client' ? 'clients' : undefined} className="dx-group">
+                  <Reveal>
+                    <div className="dx-group__head">
+                      <span className="dx-group__title">{group.label}</span>
+                      <span className="dx-group__rule" />
+                      <span className="dx-group__count">
+                        {group.items.length} project{group.items.length > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    <p className="dx-group__sub">{group.sub}</p>
+                  </Reveal>
+
+                  {group.items.some(isHeadline) && (
+                    <div className="dx-worklist">
+                      {group.items.filter(isHeadline).map((game) => {
+                        const i = n++;
+                        return (
+                          <WorkRow
+                            key={game.id}
+                            game={game}
+                            index={i + 1}
+                            flip={i % 2 === 1}
+                            lead={game.id === featured.id}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                  {group.items.some((g) => !isHeadline(g)) && (
+                    <div className="dx-minis">
+                      {group.items
+                        .filter((g) => !isHeadline(g))
+                        .map((game) => (
+                          <MiniCard key={game.id} game={game} />
+                        ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {cfg.match && other.length > 0 && (
+              <div className="dx-group">
+                <Reveal>
+                  <div className="dx-group__head">
+                    <span className="dx-group__title">
+                      Also built in {cfg.match === 'Unity' ? 'Godot' : 'Unity'}
+                    </span>
+                    <span className="dx-group__rule" />
+                    <span className="dx-group__count">{other.length} projects</span>
+                  </div>
+                  <p className="dx-group__sub">
+                    Same habits, other engine: rules kept away from presentation, written up
+                    afterwards.{' '}
+                    <Link to={cfg.match === 'Unity' ? '/godot' : '/unity'} className="dx-link">
+                      See the {cfg.match === 'Unity' ? 'Godot' : 'Unity'} page
+                    </Link>
+                  </p>
+                </Reveal>
+                {/* Client work is delivery proof on either engine page, so it keeps full rows. */}
+                <div className="dx-worklist">
+                  {other
+                    .filter((g) => g.category === 'client')
+                    .map((game, i) => (
+                      <WorkRow key={game.id} game={game} index={i + 1} flip={i % 2 === 1} lead={false} />
+                    ))}
+                </div>
+                <div className="dx-minis">
+                  {other
+                    .filter((g) => g.category !== 'client')
+                    .map((game) => (
+                      <MiniCard key={game.id} game={game} />
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ═══ Capabilities ═══ */}
+        <section id="build" className="dx-band dx-band--sunk">
+          <div className="dx-shell">
+            <div className="dx-head">
+              <h2 className="dx-display dx-h2">Systems, not screenshots.</h2>
+            </div>
+
+            {/* A line-item list, not a card grid: what I build, and where it shipped. */}
             <Reveal>
-              <SystemsObject />
+              <ul className="dx-items">
+                {caps.map((cap) => {
+                  const source = games.find((g) => g.title === cap.proofProject);
+                  return (
+                    <li key={cap.id} className="dx-item">
+                      <h3 className="dx-item__t">{cap.title}</h3>
+                      <p className="dx-item__proof">
+                        {cap.proof} ·{' '}
+                        {source ? (
+                          <Link to={`/games/${source.id}`} className="dx-link">
+                            {cap.proofProject}
+                          </Link>
+                        ) : (
+                          <b>{cap.proofProject}</b>
+                        )}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
             </Reveal>
           </div>
         </section>
 
+        {/* ═══ Process ═══ */}
+        <section id="process" className="dx-band dx-band--well">
+          <div className="dx-shell">
+            <div className="dx-head">
+              <h2 className="dx-display dx-h2">No month-long silences.</h2>
+            </div>
+
+            <Reveal>
+              <ol className="dx-steps">
+                {processSteps.map((step, i) => (
+                  <li key={step.id} className="dx-step">
+                    <span className="dx-step__n">{String(i + 1).padStart(2, '0')}</span>
+                    <h3 className="dx-step__t">{step.title}</h3>
+                    <p className="dx-step__d">{step.desc}</p>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </div>
+        </section>
+
+
+        {/* ═══ About ═══ */}
+        <section id="about" className="dx-band">
+          <div className="dx-shell dx-about">
+            <div>
+              <h2 className="dx-display dx-h2">The unglamorous half of a game.</h2>
+              <p className="dx-lede dx-about__lede">
+                I'm Mazen, a gameplay programmer studying CS. I build the part of a game that still
+                has to work a month after the deadline, and I write a postmortem for every project
+                so you can see how I think before you hire me.
+              </p>
+            </div>
+
+            {/* The contractor card: the facts a client checks before writing. */}
+            <article className="dx-ticket" aria-label="Contractor details">
+              <div className="dx-ticket__head">
+                <span>Contractor</span>
+                <span>Mazicore</span>
+              </div>
+              <dl className="dx-fields">
+                <div className="dx-field">
+                  <dt>Name</dt>
+                  <dd>Mazen</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Engines</dt>
+                  <dd>Unity 6 with C#. Godot 4 with GDScript and C++ GDExtension</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Works with</dt>
+                  <dd>Solo devs, small studios, jam teams</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Takes on</dt>
+                  <dd>Fixed-scope systems, plugins, playable prototypes</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Based</dt>
+                  <dd>Remote, across time zones</dd>
+                </div>
+                <div className="dx-field">
+                  <dt>Status</dt>
+                  <dd>
+                    <span className="dx-dot dx-dot--live">{cfg.lead}</span>
+                  </dd>
+                </div>
+              </dl>
+              <div className="dx-ticket__foot">
+                <a href="#contact" className="dx-link">
+                  Start a project
+                </a>
+                <a className="dx-link" href={ITCH} target="_blank" rel="noopener noreferrer">
+                  itch.io <ArrowUpRight size={13} />
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+
         {/* ═══ Contact ═══ */}
-        <section id="contact" className="dx-band dx-band--well">
+        <section id="contact" className="dx-band dx-band--sign">
           <div className="dx-shell dx-contact">
             <div>
-              <Slug label="Start a project" />
               <h2 className="dx-display dx-h2">
                 Tell me what you need built.
               </h2>

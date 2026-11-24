@@ -3,6 +3,7 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { AppRoutes } from './routes';
 import './styles/dossier.css';
+import './styles/ticket.css';
 
 export { routeMeta, metaTags, DEFAULT_SITE_URL } from './seo';
 

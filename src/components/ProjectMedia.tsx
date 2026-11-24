@@ -26,6 +26,8 @@ interface ProjectMediaProps {
   tall?: boolean;
   fit?: 'cover' | 'contain';
   className?: string;
+  /** First-screen media: load immediately instead of lazily. */
+  priority?: boolean;
 }
 
 export function ProjectMedia({
@@ -38,6 +40,7 @@ export function ProjectMedia({
   tall,
   fit = 'cover',
   className = '',
+  priority = false,
 }: ProjectMediaProps) {
   const wellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -80,7 +83,16 @@ export function ProjectMedia({
     const start = () => {
       if (cancelled) return;
       el.play()
-        .then(() => !cancelled && setPlaying(true))
+        // Reveal the video only once a frame has actually advanced; showing it
+        // on play() alone flashed an empty black box before the first frame.
+        .then(() => {
+          const shown = () => {
+            if (cancelled || el.currentTime <= 0) return;
+            el.removeEventListener('timeupdate', shown);
+            setPlaying(true);
+          };
+          el.addEventListener('timeupdate', shown);
+        })
         .catch(() => {
           /* Autoplay refused — the poster stays, which is a fine outcome. */
         });
@@ -109,7 +121,20 @@ export function ProjectMedia({
         </span>
       )}
 
-      <img className="dx-well__poster" src={poster} alt={alt} loading="lazy" decoding="async" />
+      {/* Every local PNG under /media has a WebP twin (about a tenth the size). */}
+      <picture>
+        {/^\/media\/.+\.png$/.test(poster) && (
+          <source srcSet={poster.replace(/\.png$/, '.webp')} type="image/webp" />
+        )}
+        <img
+          className="dx-well__poster"
+          src={poster}
+          alt={alt}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : 'auto'}
+          decoding="async"
+        />
+      </picture>
 
       {video && near && (
         <video

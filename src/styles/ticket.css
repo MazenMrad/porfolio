@@ -1,0 +1,693 @@
+/* ═══════════════════════════════════════════════════════════════
+   MAZICORE — job ticket
+   ───────────────────────────────────────────────────────────────
+   Loaded after dossier.css and wins on equal specificity. The site
+   reads as a contractor's work order: white stock, black ink, ruled
+   fields, one red stamp for the action. Default is the light stock;
+   data-theme="dark" is the carbon copy. Class names are unchanged so
+   every route keeps working.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* The explicit light selector outranks dossier.css's own light block. */
+:root,
+html[data-theme='light'] {
+  --paper: #f7f7f5;
+  --paper-sunk: #efefeb;
+  --paper-raised: #ffffff;
+  --well: #1b1b1a;
+  --well-2: #242423;
+
+  --ink: #151515;
+  --ink-2: #33332f;
+  --muted: #5b5b57;
+  --muted-soft: #65655f;
+
+  --accent: #c4210f;
+  --accent-hot: #a01a0b;
+  --accent-wash: rgba(196, 33, 15, 0.08);
+  --stamp: #c4210f;
+
+  --live: #1d7a3e;
+  --wip: #8a5a00;
+  --godot: #151515;
+
+  --rule: #151515;
+  --rule-soft: #d9d9d4;
+  --rule-well: #151515;
+
+  --display: 'Archivo', 'Atkinson Hyperlegible Next', ui-sans-serif, sans-serif;
+  --sans: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+  --mono: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, monospace;
+
+  --on-accent: #ffffff;
+  --header-shadow: none;
+  --step-fill: transparent;
+  --step-ink: var(--ink);
+  --step-ink-2: var(--ink-2);
+  --step-meta: var(--stamp);
+}
+
+/* Carbon copy. Same form, reversed stock. */
+html[data-theme='dark'] {
+  --paper: #161616;
+  --paper-sunk: #1d1d1c;
+  --paper-raised: #202020;
+  --well: #0c0c0c;
+  --ink: #ecebe6;
+  --ink-2: #cfcec8;
+  --muted: #a9a8a2;
+  --muted-soft: #9d9c96;
+  --accent: #ff5a43;
+  --accent-hot: #ff7a66;
+  --accent-wash: rgba(255, 90, 67, 0.1);
+  --stamp: #ff5a43;
+  --live: #4fd27f;
+  --wip: #f0b43c;
+  --godot: #ecebe6;
+  --rule: #ecebe6;
+  --rule-soft: #3a3a38;
+  --rule-well: #ecebe6;
+  --on-accent: #161616;
+}
+
+body {
+  font-size: 17px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+body::before { display: none; }
+
+::selection { background: var(--stamp); color: var(--on-accent); }
+:focus-visible { outline: 2px solid var(--stamp); outline-offset: 3px; border-radius: 0; }
+
+/* ─── Type ───────────────────────────────────────────────────── */
+
+.dx-display {
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.dx-h1 { font-size: clamp(2.6rem, min(6vw, 9.5vh), 5.6rem); }
+.dx-h2 { font-size: clamp(2rem, 3.8vw, 3.2rem); }
+.dx-h3 { font-size: clamp(1.45rem, 2.2vw, 1.9rem); letter-spacing: -0.015em; }
+
+/* Emphasis is underlined in red, the way a reviewer marks a ticket. */
+.dx-italic {
+  font-style: normal;
+  font-weight: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--stamp);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.12em;
+}
+
+.dx-lede { color: var(--ink-2); max-width: 54ch; }
+
+.dx-meta {
+  font-family: var(--display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* ─── Frame ──────────────────────────────────────────────────── */
+
+.dx-band {
+  border-top: 1px solid var(--rule);
+  padding-block: clamp(60px, 7vw, 108px);
+}
+.dx-band--sunk,
+.dx-band--well { background: var(--paper-sunk); }
+.dx-slug { display: none; }
+.dx-head { max-width: 62ch; margin-bottom: clamp(36px, 5vw, 60px); }
+.dx-head .dx-lede { margin-top: 18px; }
+
+/* ─── Stamp (primary action) and links ───────────────────────── */
+
+.dx-btn {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 16px 28px;
+  border: 3px solid var(--stamp);
+  background: transparent;
+  color: var(--stamp);
+  border-radius: 2px;
+  transform: rotate(-1.5deg);
+  transition: background 0.16s var(--ease), color 0.16s var(--ease), transform 0.16s var(--ease);
+}
+.dx-btn:hover {
+  background: var(--stamp);
+  border-color: var(--stamp);
+  color: var(--on-accent);
+  transform: rotate(0deg);
+}
+.dx-btn:active { transform: rotate(0deg) scale(0.97); }
+
+.dx-btn--ghost { border-color: var(--ink); color: var(--ink); }
+.dx-btn--ghost:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.dx-btn--onwell { background: transparent; color: var(--stamp); border-color: var(--stamp); }
+
+.dx-link {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.84rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ink);
+  border-bottom: 2px solid var(--stamp);
+}
+.dx-link:hover { color: var(--stamp); border-bottom-color: var(--stamp); }
+
+/* ─── Header: the form's letterhead ──────────────────────────── */
+
+.dx-header { background: var(--paper); border-bottom: 1px solid var(--rule); }
+.dx-header--scrolled { border-bottom-color: var(--rule); }
+.dx-header__inner { height: 66px; }
+
+.dx-logo { font-family: var(--display); font-weight: 900; font-size: 1.05rem; letter-spacing: 0.01em; }
+.dx-logo b { font-weight: 900; }
+.dx-logo span { color: var(--stamp); }
+.dx-logo i { font-weight: 600; font-size: 0.82rem; color: var(--muted); }
+
+.dx-nav a {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--ink);
+  border-bottom: 2px solid transparent;
+}
+.dx-nav a:hover { color: var(--ink); border-bottom-color: var(--stamp); }
+.dx-nav__cta { border: 2px solid var(--stamp); color: var(--stamp) !important; padding: 8px 14px; }
+.dx-nav__cta:hover { background: var(--stamp); color: var(--on-accent) !important; border-bottom-color: var(--stamp) !important; }
+
+.dx-theme,
+.dx-burger { border: 1px solid var(--rule); border-radius: 0; color: var(--ink); }
+.dx-theme:hover { border-color: var(--stamp); color: var(--stamp); }
+
+.dx-skip { background: var(--stamp); color: var(--on-accent); font-family: var(--display); font-weight: 800; }
+.dx-mobilenav { background: var(--paper); border-top: 1px solid var(--rule); }
+.dx-mobilenav a {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0;
+  text-transform: none;
+  border-bottom-color: var(--rule-soft);
+}
+
+.dx-switch {
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.dx-switch a { border-radius: 0; padding: 7px 13px; color: var(--ink); }
+.dx-switch a + a { border-left: 1px solid var(--rule); }
+.dx-switch a:hover { background: var(--paper-sunk); color: var(--ink); }
+.dx-switch a.is-on { background: var(--ink); color: var(--paper); }
+
+/* ─── Cover: headline beside the latest job ticket ───────────── */
+
+.dx-hero { padding-block: clamp(40px, 5.5vw, 80px) clamp(56px, 7vw, 104px); overflow: visible; }
+.dx-hero__grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: clamp(36px, 5.5vw, 88px);
+  align-items: start;
+}
+.dx-hero__title { margin: 0; }
+.dx-hero__lede { margin-top: clamp(22px, 2.6vw, 32px); }
+.dx-hero__actions { margin-top: clamp(30px, 3.4vw, 44px); gap: 26px; align-items: center; }
+
+/* Record line: the counts set as one sentence, not a stat row. */
+.dx-record {
+  margin: clamp(30px, 3.4vw, 44px) 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.dx-record b { color: var(--ink); font-weight: 700; }
+
+.dx-ticket {
+  border: 1px solid var(--rule);
+  background: var(--paper-raised);
+}
+.dx-ticket__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dx-ticket__head span:last-child { color: var(--muted); }
+.dx-ticket > a { display: block; }
+.dx-ticket .dx-well { border: none; border-bottom: 1px solid var(--rule); }
+
+.dx-fields { margin: 0; }
+.dx-field {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 14px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.95rem;
+}
+.dx-field:last-child { border-bottom: none; }
+.dx-field dt {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 3px;
+}
+.dx-field dd { margin: 0; color: var(--ink); }
+
+.dx-ticket__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--rule);
+}
+
+/* ─── Media wells ────────────────────────────────────────────── */
+
+.dx-well {
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--well);
+}
+a:hover > .dx-well,
+a:focus-visible > .dx-well,
+.dx-row:hover .dx-well,
+.dx-mini:hover .dx-well {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--stamp);
+}
+.dx-well::before,
+.dx-well::after { border-color: var(--stamp); }
+
+.dx-well__cap {
+  background: var(--well);
+  padding: 9px 14px;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  letter-spacing: 0;
+  color: #ecebe6;
+}
+.dx-well__flag {
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  padding: 5px 12px;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  background: #c4210f;
+  color: #ffffff;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.dx-well__flag--quiet { background: #151515; color: #ecebe6; border: none; }
+
+/* ─── Work: each project is a filed ticket ───────────────────── */
+
+.dx-group { padding-top: clamp(44px, 5.4vw, 80px); }
+.dx-group__head {
+  grid-template-columns: 1fr auto;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--rule);
+}
+.dx-group__rule { display: none; }
+.dx-group__title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+}
+.dx-group__count {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+.dx-group__sub { color: var(--ink-2); font-size: 1rem; margin-top: 14px; }
+
+.dx-row { border-top: 1px solid var(--rule-soft); padding-block: clamp(30px, 3.6vw, 52px); }
+.dx-row:first-child { border-top: none; }
+.dx-row .dx-row__text { border-left: none; padding-left: 0; }
+
+.dx-row__no {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.dx-row__no::before { content: 'No. '; }
+.dx-row__title { background: none; transition: color 0.16s var(--ease); }
+.dx-row:hover .dx-row__title { background: none; }
+.dx-row a:hover .dx-row__title { color: var(--stamp); }
+.dx-row--lead .dx-row__title { font-size: clamp(2.2rem, 4.2vw, 3.6rem); }
+
+.dx-row__role { font-family: var(--sans); font-size: 0.94rem; letter-spacing: 0; color: var(--muted); }
+.dx-row__hook { font-size: 1.12rem; color: var(--ink); }
+
+.dx-tag {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+  border: 1px solid var(--rule-soft);
+  padding: 3px 9px;
+}
+.dx-tag--engine { color: var(--ink); border-color: var(--rule); }
+
+.dx-mini__meta { font-family: var(--sans); font-size: 0.84rem; letter-spacing: 0; color: var(--muted); }
+.dx-mini__title { font-family: var(--display); font-weight: 900; font-size: 1.3rem; }
+
+/* ─── Capabilities: line items on the order ──────────────────── */
+
+.dx-caps {
+  counter-reset: item;
+  gap: 0;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-right: none;
+  border-bottom: none;
+}
+.dx-cap {
+  counter-increment: item;
+  background: transparent;
+  padding: 26px 26px 28px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.dx-cap:hover { background: var(--accent-wash); }
+.dx-cap::before {
+  content: 'Item ' counter(item);
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dx-cap__t { font-family: var(--display); font-weight: 900; font-size: 1.35rem; letter-spacing: -0.01em; }
+.dx-cap__d { color: var(--ink-2); font-size: 0.98rem; }
+.dx-cap__proof {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  letter-spacing: 0;
+  color: var(--muted);
+  border-top: 1px solid var(--rule-soft);
+}
+.dx-cap__proof b { color: var(--ink); font-weight: 700; }
+
+/* ─── Process: the sign-off sequence ─────────────────────────── */
+
+.dx-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-top: 2px solid var(--rule);
+}
+.dx-step,
+.dx-step:first-child {
+  margin: 0;
+  padding: 26px 24px 28px 0;
+  background: none;
+  clip-path: none;
+  border-left: none;
+}
+.dx-step + .dx-step { padding-left: 24px; border-left: 1px solid var(--rule-soft); }
+.dx-step__n {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--stamp);
+  border-radius: 50%;
+  color: var(--stamp);
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0;
+  transform: rotate(-6deg);
+}
+.dx-step__t { font-family: var(--display); font-weight: 900; font-size: 1.3rem; margin: 16px 0 10px; }
+.dx-step__d { color: var(--ink-2); font-size: 0.98rem; }
+
+/* ─── Testimonial ────────────────────────────────────────────── */
+
+.dx-vouch { border: 1px solid var(--rule); border-radius: 0; background: var(--paper-raised); box-shadow: none; }
+.dx-vouch__mark { color: var(--stamp); opacity: 1; }
+.dx-vouch__by { border-top: 1px solid var(--rule-soft); }
+.dx-vouch__src { font-family: var(--sans); letter-spacing: 0; }
+
+/* ─── About ──────────────────────────────────────────────────── */
+
+.dx-about__facts { border-top: 2px solid var(--rule); }
+.dx-about__facts li { border-bottom: 1px solid var(--rule-soft); }
+.dx-about__k {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.dx-object { border: 1px solid var(--rule); background: var(--well); color: #ecebe6; }
+.dx-object__cap { color: #b9b8b2; font-family: var(--sans); letter-spacing: 0; }
+
+/* ─── Contact: the signature block ───────────────────────────── */
+
+.dx-band--sign { background: var(--paper-raised); border-top: 2px solid var(--rule); }
+
+.dx-contact__mail {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3vw, 2.3rem);
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  border-bottom: 2px solid var(--stamp);
+}
+.dx-contact__mail:hover { color: var(--stamp); border-bottom-color: var(--stamp); }
+
+/* Checklist as empty tick boxes on the form. */
+.dx-checklist li { border-bottom: 1px solid var(--rule-soft); color: var(--ink); padding-left: 32px; }
+.dx-checklist li::before {
+  content: '';
+  top: 15px;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--ink);
+}
+
+.dx-handle__copy {
+  border: 1px dashed var(--rule);
+  font-family: var(--display);
+  font-weight: 800;
+  background: transparent;
+  color: var(--ink);
+}
+.dx-handle__copy:hover { border-color: var(--stamp); color: var(--stamp); }
+.dx-social { border: 1px solid var(--rule); color: var(--ink); border-radius: 0; font-family: var(--display); font-weight: 900; }
+.dx-social:hover { background: var(--stamp); border-color: var(--stamp); color: var(--on-accent); }
+
+.dx-footer { border-top: 1px solid var(--rule); }
+
+/* ─── Project pages ──────────────────────────────────────────── */
+
+.dx-back {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--ink);
+}
+.dx-back:hover { color: var(--stamp); }
+.dx-phero__kicker { color: var(--muted); }
+.dx-phero__hook { font-family: var(--display); font-style: normal; font-weight: 800; color: var(--ink); }
+.dx-spec { border: 1px solid var(--rule); background: var(--paper-raised); }
+.dx-spec__row { border-bottom: 1px solid var(--rule-soft); }
+.dx-spec__k {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.dx-plate__body .dx-sec:first-child { border-top: 1px solid var(--rule); }
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .dx-nav { display: none; }
+  .dx-theme { margin-left: auto; }
+  .dx-burger { display: grid; margin-left: 8px; }
+}
+@media (max-width: 920px) {
+  .dx-hero__grid { grid-template-columns: 1fr; }
+  .dx-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .dx-steps { grid-template-columns: minmax(0, 1fr); }
+  .dx-step,
+  .dx-step + .dx-step,
+  .dx-step:first-child {
+    padding: 22px 0;
+    border-left: none;
+    border-bottom: 1px solid var(--rule-soft);
+    clip-path: none;
+  }
+  .dx-step:not(:last-child)::after { display: none; }
+}
+@media (max-width: 560px) {
+  .dx-btn { width: 100%; justify-content: center; }
+  .dx-field { grid-template-columns: 88px minmax(0, 1fr); }
+}
+
+/* ─── Motion: one authored moment ────────────────────────────────
+   The stamp lands once on arrival. Content is never hidden. */
+@media (prefers-reduced-motion: no-preference) {
+  .dx-hero .dx-btn { animation: tk-stamp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both; }
+}
+@keyframes tk-stamp { from { transform: rotate(-6deg) scale(1.25); } }
+@media (prefers-reduced-motion: reduce) {
+  .dx-btn, .dx-step__n { transform: none; }
+}
+
+html { scrollbar-color: var(--muted) var(--paper); }
+
+/* The showreel sits on footage, so its stamp is white ink, red on hover. */
+.dx-reel .dx-btn { color: #ffffff; border-color: #ffffff; }
+.dx-reel .dx-btn:hover { background: #c4210f; border-color: #c4210f; color: #ffffff; }
+
+/* Games lead: media takes the larger share of every row and of the cover. */
+.dx-hero__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+.dx-row { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+.dx-row--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+.dx-row--lead { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+.dx-row__hook { max-width: 40ch; }
+@media (max-width: 920px) {
+  .dx-hero__grid,
+  .dx-row,
+  .dx-row--flip,
+  .dx-row--lead { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* What I build: two columns of ruled line items, title then where it shipped. */
+.dx-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(28px, 4vw, 64px);
+  border-top: 2px solid var(--rule);
+}
+.dx-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px 18px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.dx-item__t {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+.dx-item__proof { margin: 0; font-size: 0.95rem; color: var(--muted); }
+@media (max-width: 760px) {
+  .dx-items { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Project page closing block: on the stock with a ruled frame, not a dark well. */
+.dx-endcta {
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: 2px solid var(--rule);
+}
+.dx-endcta__t { font-weight: 900; color: var(--ink); }
+
+/* Phones: the latest job sits right under the headline so a game is on the
+   first screen, then the pitch and the action. */
+@media (max-width: 920px) {
+  .dx-hero__grid { display: flex; flex-direction: column; gap: 0; }
+  .dx-hero__body { display: contents; }
+  .dx-hero__title { order: 1; }
+  .dx-ticket { order: 2; margin-top: 22px; }
+  .dx-hero__lede { order: 3; }
+  .dx-hero__actions { order: 4; }
+  .dx-record { order: 5; }
+}
+@media (max-width: 560px) {
+  .dx-ticket .dx-field:nth-child(2),
+  .dx-ticket .dx-field:nth-child(3) { display: none; }
+  .dx-minis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
+  .dx-mini__hook { display: none; }
+  .dx-mini__title { font-size: 1.05rem; }
+}
+
+.dx-headcta { display: none; }
+@media (max-width: 1100px) {
+  .dx-headcta {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+    padding: 10px 12px;
+    border: 2px solid var(--stamp);
+    color: var(--stamp);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .dx-headcta:hover { background: var(--stamp); color: var(--on-accent); }
+  .dx-headcta + .dx-theme { margin-left: 8px; }
+}
+
+/* About: statement left, contractor card right, tops aligned. */
+.dx-about { grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr); align-items: start; }
+.dx-about__lede { margin-top: 22px; }
+@media (max-width: 920px) {
+  .dx-about { grid-template-columns: minmax(0, 1fr); }
+}
